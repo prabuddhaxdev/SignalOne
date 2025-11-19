@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
-    <div>
+    <div className="flex min-h-screen home-wrapper">
       <h1 className="text-3xl font-bold">Hello</h1>
-      <Button>Click me</Button>
     </div>
   );
 }
