@@ -12,8 +12,8 @@ export function Header() {
             src="/logo.png"
             alt="SignalOne logo"
             width={800}
-            height={800}
-            className="h-8 w-auto cursor-pointer"
+            height={1024}
+            className="h-11 w-auto cursor-pointer"
           />
         </Link>
 
