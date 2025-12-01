@@ -12,6 +12,7 @@ import { Loader2,TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { searchStocks } from "@/lib/actions/finnhub.actions";
 import { useDebounce } from "@/hooks/useDebounce";
+import WatchlistButton from "./WatchlistButton";
 
 export default function SearchCommand({
   renderAs = "button",
@@ -63,6 +64,14 @@ export default function SearchCommand({
     setSearchTerm("");
     setStocks(initialStocks);
   };
+  // Update local stock list after watchlist toggle
+  const handleWatchlistChange = (symbol: string, isAdded: boolean) => {
+    setStocks((prev) =>
+      prev.map((stock) =>
+        stock.symbol === symbol ? { ...stock, isInWatchlist: isAdded } : stock
+      )
+    );
+  };
 
   return (
     <>
@@ -101,15 +110,18 @@ export default function SearchCommand({
           ) : (
             <ul>
               <div className="search-count">
-                {isSearchMode ? "Search results" : "Popular stocks"}
-                {` `}({displayStocks?.length || 0})
+                {isSearchMode ? "Search results" : "Popular stocks"}(
+                {displayStocks?.length || 0})
               </div>
               {displayStocks?.map((stock, i) => (
-                <li key={stock.symbol} className="search-item">
+                <li
+                  key={stock.symbol}
+                  className="search-item flex items-center justify-between search-item"
+                >
                   <Link
                     href={`/stocks/${stock.symbol}`}
                     onClick={handleSelectStock}
-                    className="search-item-link"
+                    className="flex flex-1 items-center gap-2 search-item-link"
                   >
                     <TrendingUp className="h-4 w-4 text-gray-500" />
                     <div className="flex-1">
@@ -120,6 +132,15 @@ export default function SearchCommand({
                     </div>
                     {/*<Star />*/}
                   </Link>
+
+                  {/* Right side: Watchlist button (doesn't trigger navigation) */}
+                  <WatchlistButton
+                    symbol={stock.symbol}
+                    company={stock.name}
+                    isInWatchlist={stock.isInWatchlist}
+                    onWatchlistChange={handleWatchlistChange}
+                    type="icon"
+                  />
                 </li>
               ))}
             </ul>
