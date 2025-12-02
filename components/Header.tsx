@@ -30,3 +30,4 @@ export async function Header({ user }: { user: User }) {
 };
 
 
+export default Header
