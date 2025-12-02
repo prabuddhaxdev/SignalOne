@@ -4,7 +4,7 @@ import NavItems from "./NavItems";
 import UserDropdown from "./UserDropdown";
 import { searchStocks } from "@/lib/actions/finnhub.actions";
 
-const Header = async ({ user }: { user: User | null }) => {
+export async function Header({ user }: { user: User }) {
   const initialStocks = await searchStocks();
   return (
     <div className="sticky top-0 header">
@@ -15,7 +15,7 @@ const Header = async ({ user }: { user: User | null }) => {
             alt="SignalOne logo"
             width={800}
             height={1024}
-            className="h-11 w-auto cursor-pointer"
+            className="h-8 w-auto cursor-pointer"
           />
         </Link>
 
@@ -29,4 +29,4 @@ const Header = async ({ user }: { user: User | null }) => {
   );
 };
 
-export default Header;
+
