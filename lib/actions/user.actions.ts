@@ -2,11 +2,11 @@
 
 import { connectToDatabase } from "@/database/mongoose";
 
-export const getAllUsersForNewsEmail = async () => {
+export async function getAllUsersForNewsEmail() {
   try {
     const mongoose = await connectToDatabase();
     const db = mongoose.connection.db;
-    if (!db) throw new Error("Mongoose connection not connected");
+    if (!db) throw new Error("MongoDB connection not found");
 
     const users = await db
       .collection("user")
@@ -23,8 +23,8 @@ export const getAllUsersForNewsEmail = async () => {
         email: user.email,
         name: user.name,
       }));
-  } catch (e) {
-    console.error("Error fetching users for news email:", e);
+  } catch (error) {
+    console.error("Error getting all users for news email:", error);
     return [];
   }
-};
+}
