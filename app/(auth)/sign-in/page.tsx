@@ -4,9 +4,9 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/forms/InputField";
 import FooterLink from "@/components/forms/FooterLink";
-import { useRouter } from "next/navigation";
-import { signInWithEmail } from "@/lib/actions/auth.actions";
+import { signInWithEmail} from "@/lib/actions/auth.actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const SignIn = () => {
   const router = useRouter();
@@ -32,7 +32,7 @@ const SignIn = () => {
         description: e instanceof Error ? e.message : "Failed to sign in.",
       });
     }
-  }
+  };
 
   return (
     <>
@@ -42,7 +42,7 @@ const SignIn = () => {
         <InputField
           name="email"
           label="Email"
-          placeholder="johndoe@gmail.com"
+          placeholder="contact@signalone.com"
           register={register}
           error={errors.email}
           validation={{

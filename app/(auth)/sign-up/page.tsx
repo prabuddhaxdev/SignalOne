@@ -24,15 +24,15 @@ const SignUp = () => {
     formState: { errors, isSubmitting },
   } = useForm<SignUpFormData>({
     defaultValues: {
-      fullName: "",
-      email: "",
-      password: "",
-      country: "US",
-      investmentGoals: "Growth",
-      riskTolerance: "Medium",
-      preferredIndustry: "Technology",
+      fullName: '',
+      email: '',
+      password: '',
+      country: 'US',
+      investmentGoals: 'Growth',
+      riskTolerance: 'Medium',
+      preferredIndustry: 'Technology',
     },
-    mode: "onBlur",
+    mode: 'onBlur',
   });
 
   const onSubmit = async (data: SignUpFormData) => {
