@@ -10,16 +10,13 @@ import {
 
 export default function Features() {
   return (
-    <section
-      id="features"
-      className="py-24 bg-gray-900 relative overflow-hidden"
-    >
+    <section id="features" className="py-20 relative overflow-hidden">
       {/* Dynamic Background */}
       <div className="absolute top-[20%] left-[10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[10%] right-[10%] w-[500px] h-[500px] bg-yellow-500/10 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -39,8 +36,8 @@ export default function Features() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-lg sm:text-xl text-gray-400"
           >
-            Institutional-grade tools reimagined for the modern investor. Speed,
-            precision, and clarity in every interaction.
+            Powerful tools wrapped in an intuitive interface. Built for
+            investors who demand speed, accuracy, and actionable insights.
           </motion.p>
         </div>
 

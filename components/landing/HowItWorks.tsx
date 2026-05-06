@@ -32,10 +32,10 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="py-24 bg-gray-900 relative">
+    <section className="py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <motion.h2 
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -50,7 +50,7 @@ export default function HowItWorks() {
           <div className="relative">
             {/* Connecting Line */}
             <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gray-800 -translate-y-1/2 z-0" />
-            
+
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-6 relative z-10">
               {steps.map((step, index) => (
                 <motion.div
@@ -69,7 +69,7 @@ export default function HowItWorks() {
                       {step.id}
                     </div>
                   </div>
-                  
+
                   <h3 className="text-lg font-semibold text-white mb-3">{step.title}</h3>
                   <p className="text-sm text-gray-400 leading-relaxed max-w-xs">{step.description}</p>
                 </motion.div>

@@ -5,7 +5,7 @@ import { LineChart, Activity, Cpu, ArrowUpRight, ArrowDownRight } from "lucide-r
 
 export default function Analytics() {
   return (
-    <section className="py-24 bg-gray-900 overflow-hidden relative">
+    <section className="py-20 overflow-hidden relative">
       {/* Background Gradients */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(50,50,50,0.2)_0%,transparent_100%)] pointer-events-none" />
       

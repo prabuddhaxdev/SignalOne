@@ -7,9 +7,7 @@ import Link from "next/link";
 export default function Hero() {
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-18 pb-16">
-
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center max-w-5xl">
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -20,9 +18,7 @@ export default function Hero() {
           Real-time market data powered by AI
         </motion.div>
 
-        <h1
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white mb-6"
-        >
+        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white mb-6">
           Trade Smarter with <br className="hidden sm:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">
             Predictive Intelligence.
@@ -35,17 +31,19 @@ export default function Hero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed mb-10"
         >
-          Experience lightning-fast stock discovery, advanced chart analysis, and personalized AI-driven insights—all in one premium platform built for modern investors.
+          Experience lightning-fast stock discovery, advanced chart analysis,
+          and personalized AI-driven insights—all in one premium platform built
+          for modern investors.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto sm:max-w-none"
+          className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full max-w-md mx-auto sm:max-w-none"
         >
           <Link
-            href="/sign-up"
+            href="/home"
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-gray-950 font-semibold text-lg transition-all shadow-[0_0_20px_rgba(232,186,64,0.3)] hover:shadow-[0_0_30px_rgba(232,186,64,0.5)]"
           >
             Get Started

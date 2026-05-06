@@ -6,7 +6,7 @@ import { ArrowRight, Shield } from "lucide-react";
 
 export default function CTA() {
   return (
-    <section className="py-24 bg-gray-900 relative overflow-hidden">
+    <section className="pt-20 pb-24 relative overflow-hidden">
       {/* Dynamic Glow Background */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-purple-500/20 rounded-full blur-[100px] pointer-events-none" />
 

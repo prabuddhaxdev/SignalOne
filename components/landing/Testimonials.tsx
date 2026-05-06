@@ -45,16 +45,16 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="py-24 bg-gray-900 relative overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+    <section className="py-20 overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div className="text-center max-w-3xl mx-auto">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-3xl sm:text-4xl font-bold text-white mb-4"
           >
-            Trusted by traders.
+            Trusted by top traders and investors.
           </motion.h2>
           <p className="text-gray-400">Join thousands of investors making smarter moves.</p>
         </div>
@@ -64,16 +64,16 @@ export default function Testimonials() {
         {/* Fade Masks for smooth entry/exit */}
         <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-gray-900 to-transparent z-10 pointer-events-none" />
         <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none" />
-        
-        <Marquee 
-          gradient={false} 
-          speed={40} 
+
+        <Marquee
+          gradient={false}
+          speed={40}
           pauseOnHover={true}
           className="pb-8 pt-4"
         >
           {testimonials.map((testimonial, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className="mx-4 w-[350px] sm:w-[400px] p-6 rounded-2xl bg-gray-800/40 border border-gray-700/50 flex flex-col gap-4 transition-colors hover:bg-gray-800"
             >
               <div className="flex gap-1">
