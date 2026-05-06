@@ -13,8 +13,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="bg-gray-900 text-white min-h-screen selection:bg-yellow-500/30 selection:text-yellow-200">
-      {/* We use a flex column to stack sections cleanly */}
+    <main className="bg-gray-900 min-h-screen">
       <div className="flex flex-col w-full">
         <Hero />
         <Features />
