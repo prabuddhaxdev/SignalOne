@@ -15,13 +15,13 @@ export default function Hero() {
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800 border border-gray-700 text-sm font-medium text-gray-300 mb-8"
         >
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          Real-time market data powered by AI
+          The All-in-One Market Research with Real-time Analytics
         </motion.div>
 
         <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white mb-6">
-          Trade Smarter with <br className="hidden sm:block" />
+          The Ultimate <br className="hidden sm:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">
-            Predictive Intelligence.
+            Advanced Research Station.
           </span>
         </h1>
 

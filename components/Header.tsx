@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import NavItems from "./NavItems";
 import UserDropdown from "./UserDropdown";
@@ -12,16 +11,11 @@ export async function Header({ user }: { user: User | null }) {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-gray-900/80 backdrop-blur-xl">
       <div className="container relative flex h-16 items-center justify-between">
-        {/* Left: Logo */}
         <div className="flex items-center shrink-0">
-          <Link href={isLoggedIn ? "/home" : "/"} className="flex items-center gap-2">
-            <Image
-              src="/logo.png"
-              alt="SignalOne logo"
-              width={800}
-              height={1024}
-              className="h-8 w-auto cursor-pointer"
-            />
+          <Link href={ "/"} className="flex items-center gap-2">
+            <span className="text-2xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 drop-shadow-[0_0_10px_rgba(232,186,64,0.2)]">
+              SignalOne
+            </span>
           </Link>
         </div>
 

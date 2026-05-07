@@ -11,14 +11,10 @@ const Layout = async ({ children }: { children : React.ReactNode }) => {
   return (
     <main className="auth-layout">
       <section className="auth-left-section scrollbar-hide-default">
-        <Link href="/" className="auth-logo">
-          <Image
-            src="/logo.png"
-            alt="SignalOne logo"
-            width={800}
-            height={1024}
-            className="h-11 w-auto"
-          />
+        <Link href="/" className="auth-logo block">
+          <span className="text-3xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 drop-shadow-[0_0_15px_rgba(232,186,64,0.2)]">
+            SignalOne
+          </span>
         </Link>
 
         <div className="pb-6 lg:pb-8 flex-1">{children}</div>
