@@ -1,4 +1,4 @@
-NODE_ENV='development'
+NODE_ENV='development' #change to production while deploying
 
 NEXT_PUBLIC_BASE_URL=https://localhost:3000
 

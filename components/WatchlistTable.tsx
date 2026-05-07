@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { WATCHLIST_TABLE_HEADER } from "@/lib/constants";
 import { cn, getChangeColorClass } from "@/lib/utils";
@@ -15,9 +16,31 @@ import {
 } from "./ui/table";
 import { Button } from "./ui/button";
 import WatchlistButton from "./WatchlistButton";
+import { createAlertAction } from "@/lib/actions/alert.actions";
 
 export function WatchlistTable({ watchlist }: WatchlistTableProps) {
   const router = useRouter();
+
+  const handleAddAlert = async (e: React.MouseEvent, item: StockWithData) => {
+    e.stopPropagation();
+
+    toast.promise(
+      createAlertAction({
+        symbol: item.symbol,
+        company: item.company,
+        threshold: item.currentPrice || 0,
+        alertType: "upper", 
+      }),
+      {
+        loading: "Adding alert...",
+        success: (data) => {
+          if (data.success) return `Alert added for ${item.symbol}`;
+          throw new Error(data.message);
+        },
+        error: (err) => err.message || "Failed to add alert",
+      }
+    );
+  };
 
   return (
     <>
@@ -67,10 +90,15 @@ export function WatchlistTable({ watchlist }: WatchlistTableProps) {
               </TableCell>
 
               <TableCell>
-                <Button className="add-alert">Add Alert</Button>
+                <Button
+                  className="add-alert"
+                  onClick={(e) => handleAddAlert(e, item)}
+                >
+                  Add Alert
+                </Button>
               </TableCell>
 
-              <TableCell>
+              <TableCell onClick={(e) => e.stopPropagation()}>
                 <WatchlistButton
                   symbol={item.symbol}
                   company={item.company}

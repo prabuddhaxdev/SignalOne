@@ -14,8 +14,7 @@ import { getWatchlistSymbolsByEmail } from "../actions/watchlist.actions";
 import { getAllUsersForNewsEmail } from "../actions/user.actions";
 
 export const sendSignUpEmail = inngest.createFunction(
-  { id: "sign-up-email" },
-  { event: "app/user.created" },
+  { id: "sign-up-email", event: "app/user.created" as any },
   async ({ event, step }) => {
     const userProfile = `
         - Country: ${event.data.country}
@@ -30,7 +29,7 @@ export const sendSignUpEmail = inngest.createFunction(
     );
 
     const response = await step.ai.infer("generate-welcome-intro", {
-      model: step.ai.models.gemini({ model: "gemini-2.5-flash-lite" }),
+      model: step.ai.models.gemini({ model: "gemini-1.5-flash" }),
       body: {
         contents: [
           {
@@ -62,9 +61,10 @@ export const sendSignUpEmail = inngest.createFunction(
 );
 
 export const sendDailyNewsSummary = inngest.createFunction(
-  { id: "daily-news-summary" },
-  [{ event: "app/send.daily.news" }, { cron: "0 12 * * *" }],
-  // [{ event: "app/send.daily.news" }, { cron: "* * * * *" }],
+  { 
+    id: "daily-news-summary", 
+    triggers: [{ event: "app/send.daily.news" }, { cron: "0 12 * * *" }] as any 
+  },
   async ({ step }) => {
     // Step #1: Get all users for news delivery
     const users = await step.run("get-all-users", getAllUsersForNewsEmail);
@@ -74,10 +74,10 @@ export const sendDailyNewsSummary = inngest.createFunction(
     // Step #2: For each user, get watchlist symbols -> fetch news (fallback to general)
     const results = await step.run("fetch-user-news", async () => {
       const perUser: Array<{
-        user: UserForNewsEmail;
+        user: User;
         articles: MarketNewsArticle[];
       }> = [];
-      for (const user of users as UserForNewsEmail[]) {
+      for (const user of users as User[]) {
         try {
           const symbols = await getWatchlistSymbolsByEmail(user.email);
           let articles = await getNews(symbols);
@@ -97,38 +97,36 @@ export const sendDailyNewsSummary = inngest.createFunction(
       return perUser;
     });
 
-    // Step #3: (placeholder) Summarize news via AI
+    // Step #3: Summarize news via AI for each user
     const userNewsSummaries: {
-      user: UserForNewsEmail;
+      user: User;
       newsContent: string | null;
     }[] = [];
 
     for (const { user, articles } of results) {
-      try {
-        const prompt = NEWS_SUMMARY_EMAIL_PROMPT.replace(
-          "{{newsData}}",
-          JSON.stringify(articles, null, 2)
-        );
+      if (articles.length === 0) continue;
 
-        const response = await step.ai.infer(`summarize-news-${user.email}`, {
-          model: step.ai.models.gemini({ model: "gemini-2.5-flash-lite" }),
-          body: {
-            contents: [{ role: "user", parts: [{ text: prompt }] }],
-          },
-        });
+      const newsContent = await step.run(`summarize-news-${user.email}`, async () => {
+          const prompt = NEWS_SUMMARY_EMAIL_PROMPT.replace(
+            "{{newsData}}",
+            JSON.stringify(articles, null, 2)
+          );
 
-        const part = response.candidates?.[0]?.content?.parts?.[0];
-        const newsContent =
-          (part && "text" in part ? part.text : null) || "No market news.";
+          const response = await step.ai.infer(`ai-summary-${user.email}`, {
+            model: step.ai.models.gemini({ model: "gemini-1.5-flash" }),
+            body: {
+              contents: [{ role: "user", parts: [{ text: prompt }] }],
+            },
+          });
 
-        userNewsSummaries.push({ user, newsContent });
-      } catch (e) {
-        console.error("Failed to summarize news for : ", user.email, e);
-        userNewsSummaries.push({ user, newsContent: null });
-      }
+          const part = response.candidates?.[0]?.content?.parts?.[0];
+          return (part && "text" in part ? part.text : null) || "No market news.";
+      });
+
+      userNewsSummaries.push({ user, newsContent });
     }
 
-    // Step #4: (placeholder) Send the emails
+    // Step #4: Send the emails
     await step.run("send-news-emails", async () => {
       await Promise.all(
         userNewsSummaries.map(async ({ user, newsContent }) => {
@@ -149,3 +147,23 @@ export const sendDailyNewsSummary = inngest.createFunction(
     };
   }
 );
+
+export const handleStockAlert = inngest.createFunction(
+  { id: "handle-stock-alert", event: "app/alert.created" as any },
+  async ({ event, step }) => {
+    const { symbol, company, threshold, alertType, userEmail } = event.data;
+
+    // In a real app, we might wait for the price to hit the threshold.
+    // For this demo, we'll just simulate an immediate alert confirmation or wait logic.
+    
+    await step.run("send-alert-confirmation", async () => {
+      // Simulate sending an email or notification
+      console.log(`Alert set for ${symbol} (${company}) at ${threshold} (${alertType})`);
+      // Here you could call another nodemailer function if it existed
+    });
+
+    return { success: true, symbol };
+  }
+);
+
+
