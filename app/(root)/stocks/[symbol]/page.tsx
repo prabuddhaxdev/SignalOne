@@ -70,16 +70,16 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
             height={400}
           />
 
-          <TradingViewWidget
+          {/* <TradingViewWidget
             scriptUrl={`${scriptUrl}company-profile.js`}
             config={COMPANY_PROFILE_WIDGET_CONFIG(symbol)}
             height={440}
-          />
+          /> */}
 
           <TradingViewWidget
             scriptUrl={`${scriptUrl}financials.js`}
             config={COMPANY_FINANCIALS_WIDGET_CONFIG(symbol)}
-            height={464}
+            height={1000}
           />
         </div>
       </section>

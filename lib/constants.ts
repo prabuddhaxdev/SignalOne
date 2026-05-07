@@ -123,13 +123,13 @@ export const TOP_STORIES_WIDGET_CONFIG = {
   locale: "en",
   market: "stock",
   width: "100%",
-  height: "600",
+  height: "800",
 };
 
 export const MARKET_DATA_WIDGET_CONFIG = {
   title: "Stocks",
   width: "100%",
-  height: 600,
+  height: 800,
   locale: "en",
   showSymbolLogo: true,
   colorTheme: "dark",
@@ -258,7 +258,7 @@ export const COMPANY_FINANCIALS_WIDGET_CONFIG = (symbol: string) => ({
   isTransparent: "true",
   locale: "en",
   width: "100%",
-  height: 464,
+  height: 913,
   displayMode: "regular",
   largeChartUrl: "",
 });
