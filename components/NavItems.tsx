@@ -38,7 +38,7 @@ const NavItems = ({
             <Link
               href={href}
               className={`hover:text-yellow-500 transition-colors ${
-                isActive(href) ? "text-white" : "text-gray-400"
+                isActive(href) ? "text-yellow-500" : "text-gray-400"
               }`}
             >
               {label}

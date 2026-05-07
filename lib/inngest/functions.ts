@@ -166,4 +166,17 @@ export const handleStockAlert = inngest.createFunction(
   }
 );
 
+export const handleStockAlertRemoval = inngest.createFunction(
+  { id: "handle-stock-alert-removal", event: "app/alert.removed" as any },
+  async ({ event, step }) => {
+    const { symbol, userEmail } = event.data;
+
+    await step.run("log-alert-removal", async () => {
+      console.log(`Alert removed for ${symbol} by ${userEmail}`);
+    });
+
+    return { success: true, symbol };
+  }
+);
+
 
