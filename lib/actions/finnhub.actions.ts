@@ -256,6 +256,7 @@ export const getStocksDetails = cache(async (symbol: string) => {
     return {
       symbol: cleanSymbol,
       company: profileData?.name,
+      exchange: profileData?.exchange,
       currentPrice: quoteData.c,
       changePercent,
       priceFormatted: formatPrice(quoteData.c),

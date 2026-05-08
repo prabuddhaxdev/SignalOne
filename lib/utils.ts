@@ -5,6 +5,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function toTradingViewSymbol(symbol: string, exchange?: string) {
+  const sym = (symbol || "").trim().toUpperCase();
+  if (!sym) return sym;
+  if (sym.includes(":")) return sym;
+
+  const ex = (exchange || "").toUpperCase();
+  const prefix =
+    ex.includes("NASDAQ") ? "NASDAQ" : ex.includes("NYSE") ? "NYSE" : ex.includes("AMEX") ? "AMEX" : undefined;
+
+  return prefix ? `${prefix}:${sym}` : sym;
+}
+
 
 export const formatTimeAgo = (timestamp: number) => {
   const now = Date.now();

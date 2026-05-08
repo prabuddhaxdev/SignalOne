@@ -1,4 +1,4 @@
-import React from "react";
+
 import TradingViewWidget from "@/components/TradingViewWidget";
 import { TOP_STORIES_WIDGET_CONFIG } from "@/lib/constants";
 
