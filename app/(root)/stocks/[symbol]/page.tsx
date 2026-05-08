@@ -82,7 +82,6 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
 
       <section className="mt-10 w-full">
         <TradingViewWidget
-          title="Financial Statements (Income, Balance Sheet, Cash Flow)"
           scriptUrl={`${scriptUrl}financials.js`}
           config={COMPANY_FINANCIALS_WIDGET_CONFIG(tvSymbol)}
           height={1000}
