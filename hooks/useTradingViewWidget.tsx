@@ -15,7 +15,8 @@ export function useTradingViewWidget(
     if (!container) return;
     if (container.dataset.loaded) return;
 
-    container.innerHTML = `<div class="tradingview-widget-container__widget" style="width: 100%; height: ${height}px;"></div>`;
+    const heightValue = typeof height === "number" ? `${height}px` : height;
+    container.innerHTML = `<div class="tradingview-widget-container__widget" style="width: 100%; height: ${heightValue};"></div>`;
 
     const script = document.createElement("script");
     script.src = scriptUrl;

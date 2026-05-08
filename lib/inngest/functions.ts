@@ -149,17 +149,26 @@ export const sendDailyNewsSummary = inngest.createFunction(
 );
 
 export const handleStockAlert = inngest.createFunction(
-  { id: "handle-stock-alert", event: "app/alert.created" as any },
+  { 
+    id: "handle-stock-alert", 
+    event: "app/alert.created" as any,
+    cancelOn: [
+      {
+        event: "app/alert.removed",
+        match: "data.symbol",
+      },
+    ],
+  },
   async ({ event, step }) => {
     const { symbol, company, threshold, alertType, userEmail } = event.data;
 
-    // In a real app, we might wait for the price to hit the threshold.
-    // For this demo, we'll just simulate an immediate alert confirmation or wait logic.
+    // We sleep to simulate a long-running monitoring process.
+    // This allows the "Remove Alert" action to actually cancel this function run.
+    await step.sleep("wait-for-monitoring", "24h");
     
     await step.run("send-alert-confirmation", async () => {
       // Simulate sending an email or notification
-      console.log(`Alert set for ${symbol} (${company}) at ${threshold} (${alertType})`);
-      // Here you could call another nodemailer function if it existed
+      console.log(`Alert triggered for ${symbol} (${company}) at ${threshold} (${alertType})`);
     });
 
     return { success: true, symbol };
