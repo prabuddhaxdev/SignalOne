@@ -175,6 +175,45 @@ export const MARKET_DATA_WIDGET_CONFIG = {
   ],
 };
 
+export const FOREX_WIDGET_CONFIG = {
+  colorTheme: "dark",
+  isTransparent: false,
+  locale: "en",
+  currencies: [
+    "EUR",
+    "USD",
+    "AED",
+    "JPY",
+    "GBP",
+    "CHF",
+    "AUD",
+    "CAD",
+    "NZD",
+    "CNY",
+  ],
+  backgroundColor: "#0F0F0F",
+  width: "100%",
+  height: "600",
+};
+
+
+export const CRYPTO_HEATMAP_WIDGET_CONFIG = {
+  dataSource: "Crypto",
+  blockSize: "market_cap_calc",
+  blockColor: "24h_close_change|5",
+  locale: "en",
+  symbolUrl: "",
+  colorTheme: "dark",
+  hasTopBar: false,
+  isDataSetEnabled: false,
+  isZoomEnabled: true,
+  hasSymbolTooltip: true,
+  isMonoSize: false,
+  width: "100%",
+  height: "600",
+};
+
+
 export const SYMBOL_INFO_WIDGET_CONFIG = (symbol: string) => ({
   symbol: symbol.toUpperCase(),
   colorTheme: "dark",
