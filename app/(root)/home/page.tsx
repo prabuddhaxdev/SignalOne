@@ -37,14 +37,14 @@ export default function Home() {
           <TradingViewWidget
             scriptUrl={`${scriptUrl}market-quotes.js`}
             config={MARKET_DATA_WIDGET_CONFIG}
-            height={800}
+            height={810}
           />
         </div>
         <div className="h-full md:col-span-1 xl:col-span-1">
           <TradingViewWidget
             scriptUrl={`${scriptUrl}timeline.js`}
             config={TOP_STORIES_WIDGET_CONFIG}
-            height={800}
+            height={820}
           />
         </div>
       </section>

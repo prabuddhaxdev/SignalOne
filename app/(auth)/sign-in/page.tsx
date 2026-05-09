@@ -25,10 +25,32 @@ const SignIn = () => {
   const onSubmit = async (data: SignInFormData) => {
     try {
       const result = await signInWithEmail(data);
-      if (result.success) router.push("/");
+      if (result.success) {
+        router.push("/");
+      } else {
+        const isWrongPassword = result.error === "Password is wrong";
+        const isUserNotFound = result.error === "Please Sign up first";
+
+        if (isWrongPassword) {
+          toast.error("Incorrect Password", {
+            style: {
+              backgroundColor: "#ef4444",
+              color: "white",
+              borderColor: "#ef4444",
+            },
+            className: "text-white",
+          });
+        } else if (isUserNotFound) {
+          toast.error("Please Sign up first");
+        } else {
+          toast.error("Sign in failed", {
+            description: result.error || "Failed to sign in.",
+          });
+        }
+      }
     } catch (e) {
       console.error(e);
-      toast.error("Sign in failed", {
+      toast.error("An unexpected error occurred", {
         description: e instanceof Error ? e.message : "Failed to sign in.",
       });
     }
@@ -47,7 +69,10 @@ const SignIn = () => {
           error={errors.email}
           validation={{
             required: "Email is required",
-            pattern: /^\w+@\w+\.\w+$/,
+            pattern: {
+              value: /^\w+@\w+\.\w+$/,
+              message: "Invalid email format",
+            },
           }}
         />
 
@@ -58,7 +83,13 @@ const SignIn = () => {
           type="password"
           register={register}
           error={errors.password}
-          validation={{ required: "Password is required", minLength: 8 }}
+          validation={{
+            required: "Password is required",
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters",
+            },
+          }}
         />
 
         <Button
