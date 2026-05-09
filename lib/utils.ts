@@ -6,11 +6,17 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function toTradingViewSymbol(symbol: string, exchange?: string) {
-  const sym = (symbol || "").trim().toUpperCase();
+  let sym = (symbol || "").trim().toUpperCase();
   if (!sym) return sym;
   if (sym.includes(":")) return sym;
 
+  // Handle finnhub legacy symbols
+  if (sym.endsWith(".NS")) sym = sym.replace(".NS", "");
+  if (sym.endsWith(".BO")) sym = sym.replace(".BO", "");
+
   const ex = (exchange || "").toUpperCase();
+  if (ex === "NSE" || ex === "BSE") return `${ex}:${sym}`;
+
   const prefix =
     ex.includes("NASDAQ") ? "NASDAQ" : ex.includes("NYSE") ? "NYSE" : ex.includes("AMEX") ? "AMEX" : undefined;
 

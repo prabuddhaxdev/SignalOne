@@ -27,6 +27,7 @@ export default function SearchCommand({
 
   const isSearchMode = !!searchTerm.trim();
   const displayStocks = isSearchMode ? stocks : stocks?.slice(0, 10);
+  
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -88,6 +89,7 @@ export default function SearchCommand({
         open={open}
         onOpenChange={setOpen}
         className="search-dialog"
+        shouldFilter={false}
       >
         <div className="search-field">
           <CommandInput

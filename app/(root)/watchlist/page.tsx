@@ -1,4 +1,5 @@
 import { StarIcon } from "lucide-react";
+export const dynamic = "force-dynamic";
 
 import { searchStocks } from "@/lib/actions/finnhub.actions";
 import SearchCommand from "@/components/SearchCommand";
