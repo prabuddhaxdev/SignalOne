@@ -115,7 +115,7 @@ export const HEATMAP_WIDGET_CONFIG = {
   hasSymbolTooltip: true,
   isMonoSize: false,
   width: "100%",
-  height: "600",
+  height: 600,
 };
 
 export const TOP_STORIES_WIDGET_CONFIG = {
@@ -126,7 +126,7 @@ export const TOP_STORIES_WIDGET_CONFIG = {
   locale: "en",
   market: "stock",
   width: "100%",
-  height: "810",
+  height: 810,
 };
 
 export const MARKET_DATA_WIDGET_CONFIG = {
@@ -193,7 +193,7 @@ export const FOREX_WIDGET_CONFIG = {
   ],
   backgroundColor: "#0F0F0F",
   width: "100%",
-  height: "600",
+  height: 600,
 };
 
 
@@ -210,7 +210,7 @@ export const CRYPTO_HEATMAP_WIDGET_CONFIG = {
   hasSymbolTooltip: true,
   isMonoSize: false,
   width: "100%",
-  height: "600",
+  height: 600,
 };
 
 
@@ -301,7 +301,7 @@ export const COMPANY_FINANCIALS_WIDGET_CONFIG = (symbol: string) => ({
   isTransparent: true,
   locale: "en",
   width: "100%",
-  height: 913,
+  height: 1000,
   displayMode: "regular",
   largeChartUrl: "",
 });

@@ -16,7 +16,7 @@ function TradingViewWidget({
   title,
   scriptUrl,
   config,
-  height = 600,
+  height,
   className,
 }: props) {
   const containerRef = useTradingViewWidget(scriptUrl, config, height);

@@ -18,7 +18,7 @@ const NewsPage = () => {
         <TradingViewWidget
           scriptUrl={scriptUrl}
           config={TOP_STORIES_WIDGET_CONFIG}
-          height={450}
+          height={650}
           className="p-1"
         />
       </div>

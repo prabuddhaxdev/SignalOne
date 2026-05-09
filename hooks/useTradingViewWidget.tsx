@@ -2,10 +2,19 @@
 
 import { useEffect, useRef } from "react";
 
+function coerceHeightFromConfig(raw: unknown, fallback: number): number {
+  if (typeof raw === "number" && Number.isFinite(raw)) return raw;
+  if (typeof raw === "string") {
+    const n = Number.parseInt(raw, 10);
+    if (Number.isFinite(n)) return n;
+  }
+  return fallback;
+}
+
 export function useTradingViewWidget(
   scriptUrl: string,
   config: Record<string, unknown>,
-  height = 600
+  heightProp?: number
 ) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -15,13 +24,19 @@ export function useTradingViewWidget(
     if (!container) return;
     if (container.dataset.loaded) return;
 
-    const heightValue = typeof height === "number" ? `${height}px` : height;
-    container.innerHTML = `<div class="tradingview-widget-container__widget" style="width: 100%; height: ${heightValue};"></div>`;
+    const resolvedHeight =
+      heightProp !== undefined && Number.isFinite(heightProp)
+        ? heightProp
+        : coerceHeightFromConfig(config.height, 600);
+
+    const embedConfig = { ...config, height: resolvedHeight };
+
+    container.innerHTML = `<div class="tradingview-widget-container__widget" style="width: 100%; height: ${resolvedHeight}px;"></div>`;
 
     const script = document.createElement("script");
     script.src = scriptUrl;
     script.async = true;
-    script.innerHTML = JSON.stringify(config);
+    script.innerHTML = JSON.stringify(embedConfig);
 
     container.appendChild(script);
     container.dataset.loaded = "true";
@@ -30,7 +45,7 @@ export function useTradingViewWidget(
       container.innerHTML = "";
       delete container.dataset.loaded;
     };
-  }, [scriptUrl, config, height]);
+  }, [scriptUrl, config, heightProp]);
 
   return containerRef;
 }
