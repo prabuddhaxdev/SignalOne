@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-
 import { WATCHLIST_TABLE_HEADER } from "@/lib/constants";
 import { cn, getChangeColorClass } from "@/lib/utils";
 
@@ -14,9 +13,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
-import { Button } from "./ui/button";
-import WatchlistButton from "./WatchlistButton";
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import WatchlistButton from "@/components/WatchlistButton";
 import { createAlertAction, removeAlertAction } from "@/lib/actions/alert.actions";
 
 export function WatchlistTable({ watchlist }: WatchlistTableProps) {
@@ -31,7 +30,7 @@ export function WatchlistTable({ watchlist }: WatchlistTableProps) {
         symbol: item.symbol,
         company: item.company,
         threshold: item.currentPrice || 0,
-        alertType: "upper", 
+        alertType: "upper",
       }),
       {
         loading: "Adding alert...",
@@ -49,7 +48,7 @@ export function WatchlistTable({ watchlist }: WatchlistTableProps) {
 
   const handleRemoveAlert = async (e: React.MouseEvent, symbol: string) => {
     e.stopPropagation();
-    
+
     toast.promise(
       removeAlertAction({ symbol }),
       {
@@ -86,18 +85,19 @@ export function WatchlistTable({ watchlist }: WatchlistTableProps) {
         <TableBody>
           {watchlist.map((item, index) => {
             const isAlerted = alertedSymbols.has(item.symbol);
-            
+
             return (
               <TableRow
                 key={item.symbol + index}
                 className="table-row"
-                onClick={() =>
-                  router.push(`/stocks/${encodeURIComponent(item.symbol)}`)
-                }
+                onClick={() => {
+                  const symbolOnly = item.symbol.includes(":") ? item.symbol.split(":")[1] : item.symbol;
+                  router.push(`/stocks/${encodeURIComponent(symbolOnly)}`);
+                }}
               >
                 <TableCell className="pl-4 table-cell">{item.company}</TableCell>
 
-                <TableCell className="table-cell">{item.symbol}</TableCell>
+                <TableCell className="table-cell">{item.symbol.replace(":", " : ")}</TableCell>
 
                 <TableCell className="table-cell">
                   {item.priceFormatted || "—"}

@@ -62,13 +62,13 @@ const WatchlistButton = ({
       <button
         title={
           added
-            ? `Remove ${symbol} from watchlist`
-            : `Add ${symbol} to watchlist`
+            ? `Remove ${symbol.includes(":") ? symbol.split(":")[1] : symbol} from watchlist`
+            : `Add ${company} to watchlist`
         }
         aria-label={
           added
-            ? `Remove ${symbol} from watchlist`
-            : `Add ${symbol} to watchlist`
+            ? `Remove ${symbol.includes(":") ? symbol.split(":")[1] : symbol} from watchlist`
+            : `Add ${symbol.includes(":") ? symbol.split(":")[1] : symbol} to watchlist`
         }
         className={`watchlist-icon-btn ${added ? "watchlist-icon-added" : ""}`}
         onClick={handleClick}
