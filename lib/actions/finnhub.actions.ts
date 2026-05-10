@@ -190,7 +190,7 @@ export const getStocksDetails = cache(async (symbol: string) => {
     if (cleanSymbol.includes(":")) {
       body = {
         symbols: { tickers: [cleanSymbol] },
-        columns: ["name", "description", "exchange", "close", "change", "market_cap_basic", "price_earnings_ttm"]
+        columns: ["name", "description", "exchange", "close", "change", "market_cap_basic", "price_earnings_ttm", "currency"]
       };
     } else {
       let searchTicker = cleanSymbol;
@@ -199,7 +199,7 @@ export const getStocksDetails = cache(async (symbol: string) => {
 
       body = {
         filter: [{ left: "name", operation: "equal", right: searchTicker }],
-        columns: ["name", "description", "exchange", "close", "change", "market_cap_basic", "price_earnings_ttm"],
+        columns: ["name", "description", "exchange", "close", "change", "market_cap_basic", "price_earnings_ttm", "currency"],
         sort: { sortBy: "Value.Traded", sortOrder: "desc" },
         range: [0, 1]
       };
@@ -217,7 +217,7 @@ export const getStocksDetails = cache(async (symbol: string) => {
 
     if (!result) return null;
 
-    const [ticker, name, exchange, close, change, marketCap, peRatio] = result.d;
+    const [ticker, name, exchange, close, change, marketCap, peRatio, currency] = result.d;
 
     return {
       symbol: result.s,
@@ -225,10 +225,11 @@ export const getStocksDetails = cache(async (symbol: string) => {
       exchange: exchange || "US",
       currentPrice: close || 0,
       changePercent: change || 0,
-      priceFormatted: formatPrice(close || 0),
+      priceFormatted: formatPrice(close || 0, currency || "USD"),
       changeFormatted: formatChangePercent(change || 0),
       peRatio: peRatio?.toFixed(1) || "—",
-      marketCapFormatted: formatMarketCapValue(marketCap || 0),
+      marketCapFormatted: formatMarketCapValue(marketCap || 0, currency || "USD"),
+      currency: currency || "USD",
     };
   } catch (error) {
     console.error(`Error fetching details for ${cleanSymbol}:`, error);

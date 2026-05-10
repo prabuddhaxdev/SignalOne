@@ -45,13 +45,30 @@ export function delay(ms: number) {
 }
 
 // Formatted string like "$3.10T", "$900.00B", "$25.00M" or "$999,999.99"
-export function formatMarketCapValue(marketCapUsd: number): string {
-  if (!Number.isFinite(marketCapUsd) || marketCapUsd <= 0) return 'N/A';
+export function getCurrencySymbol(currency: string = "USD"): string {
+  try {
+    const formatter = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+    });
+    const parts = formatter.formatToParts(0);
+    const symbolPart = parts.find(part => part.type === 'currency');
+    return symbolPart ? symbolPart.value : (currency === "INR" ? "₹" : "$");
+  } catch (e) {
+    return currency === "INR" ? "₹" : "$";
+  }
+}
 
-  if (marketCapUsd >= 1e12) return `$${(marketCapUsd / 1e12).toFixed(2)}T`; // Trillions
-  if (marketCapUsd >= 1e9) return `$${(marketCapUsd / 1e9).toFixed(2)}B`; // Billions
-  if (marketCapUsd >= 1e6) return `$${(marketCapUsd / 1e6).toFixed(2)}M`; // Millions
-  return `$${marketCapUsd.toFixed(2)}`; // Below one million, show full USD amount
+// Formatted string like "$3.10T", "₹900.00B", "£25.00M"
+export function formatMarketCapValue(marketCap: number, currency: string = "USD"): string {
+  if (!Number.isFinite(marketCap) || marketCap <= 0) return 'N/A';
+
+  const symbol = getCurrencySymbol(currency);
+
+  if (marketCap >= 1e12) return `${symbol}${(marketCap / 1e12).toFixed(2)}T`; // Trillions
+  if (marketCap >= 1e9) return `${symbol}${(marketCap / 1e9).toFixed(2)}B`; // Billions
+  if (marketCap >= 1e6) return `${symbol}${(marketCap / 1e6).toFixed(2)}M`; // Millions
+  return `${symbol}${marketCap.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export const getDateRange = (days: number) => {
@@ -127,10 +144,10 @@ export const getChangeColorClass = (changePercent?: number) => {
   return changePercent > 0 ? "text-green-500" : "text-red-500";
 };
 
-export const formatPrice = (price: number) => {
+export const formatPrice = (price: number, currency: string = "USD") => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: currency,
     minimumFractionDigits: 2,
   }).format(price);
 };

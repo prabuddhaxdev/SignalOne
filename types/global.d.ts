@@ -143,6 +143,7 @@ declare global {
     changeFormatted?: string;
     marketCap?: string;
     peRatio?: string;
+    currency?: string;
   };
 
   type AlertsListProps = {
