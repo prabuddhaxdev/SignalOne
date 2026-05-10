@@ -38,9 +38,6 @@ const WatchlistButton = ({
           added ? "removed from" : "added to"
         } your watchlist`,
       });
-
-      // Notify parent component of watchlist change for state synchronization
-      onWatchlistChange?.(symbol, !added);
     }
   }
 
@@ -53,8 +50,15 @@ const WatchlistButton = ({
     e.stopPropagation();
     e.preventDefault();
 
-    setAdded(!added);
-    debouncedToggle();
+    const nextAdded = !added;
+    setAdded(nextAdded);
+    onWatchlistChange?.(symbol, nextAdded);
+    
+    if (nextAdded) {
+      debouncedToggle();
+    } else {
+      toggleWatchlist();
+    }
   }
 
   if (type === "icon") {

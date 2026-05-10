@@ -76,10 +76,16 @@ export async function removeFromWatchlist(symbol: string) {
     });
     if (!session?.user) redirect("/sign-in");
 
-    // Remove from watchlist
-    await Watchlist.deleteOne({
+    // Remove from watchlist - handle both full symbol and ticker-only formats
+    const upSymbol = symbol.toUpperCase();
+    const tickerOnly = upSymbol.includes(":") ? upSymbol.split(":")[1] : upSymbol;
+
+    await Watchlist.deleteMany({
       userId: session.user.id,
-      symbol: symbol.toUpperCase(),
+      $or: [
+        { symbol: upSymbol },
+        { symbol: tickerOnly }
+      ]
     });
     revalidatePath("/watchlist");
 

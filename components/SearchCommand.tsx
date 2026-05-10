@@ -60,6 +60,10 @@ export default function SearchCommand({
     debouncedSearch();
   }, [searchTerm]);
 
+  useEffect(() => {
+    setStocks(initialStocks);
+  }, [initialStocks]);
+
   const handleSelectStock = () => {
     setOpen(false);
     setSearchTerm("");

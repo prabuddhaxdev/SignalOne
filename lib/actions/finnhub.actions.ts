@@ -151,7 +151,7 @@ export const searchStocks = cache(
         body: JSON.stringify(body)
       });
       if (!res.ok) throw new Error("Scanner API failed");
-      
+
       const data = await res.json();
       const results = Array.isArray(data?.data) ? data.data : [];
 
@@ -209,9 +209,9 @@ export const getStocksDetails = cache(async (symbol: string) => {
       method: "POST",
       body: JSON.stringify(body)
     });
-    
+
     if (!res.ok) return null;
-    
+
     const data = await res.json();
     const result = data?.data?.[0];
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { WATCHLIST_TABLE_HEADER } from "@/lib/constants";
 import { cn, getChangeColorClass } from "@/lib/utils";
@@ -20,7 +20,41 @@ import { createAlertAction, removeAlertAction } from "@/lib/actions/alert.action
 
 export function WatchlistTable({ watchlist }: WatchlistTableProps) {
   const router = useRouter();
+  const [removedSymbols, setRemovedSymbols] = useState<Set<string>>(new Set());
   const [alertedSymbols, setAlertedSymbols] = useState<Set<string>>(new Set());
+
+  // Filter the watchlist based on local pending removals
+  const displayWatchlist = watchlist.filter((item) => !removedSymbols.has(item.symbol));
+
+  useEffect(() => {
+    // Synchronize removedSymbols with the actual watchlist from the server.
+    // If an item is no longer in the server-side watchlist, we can stop tracking its removal locally.
+    setRemovedSymbols((prev) => {
+      if (prev.size === 0) return prev;
+      const serverSymbols = new Set(watchlist.map((item) => item.symbol));
+      const next = new Set(prev);
+      let changed = false;
+      prev.forEach((symbol) => {
+        if (!serverSymbols.has(symbol)) {
+          next.delete(symbol);
+          changed = true;
+        }
+      });
+      return changed ? next : prev;
+    });
+  }, [watchlist]);
+
+  const handleWatchlistChange = (symbol: string, isAdded: boolean) => {
+    if (!isAdded) {
+      setRemovedSymbols((prev) => new Set(prev).add(symbol));
+    } else {
+      setRemovedSymbols((prev) => {
+        const next = new Set(prev);
+        next.delete(symbol);
+        return next;
+      });
+    }
+  };
 
   const handleAddAlert = async (e: React.MouseEvent, item: StockWithData) => {
     e.stopPropagation();
@@ -83,7 +117,7 @@ export function WatchlistTable({ watchlist }: WatchlistTableProps) {
         </TableHeader>
 
         <TableBody>
-          {watchlist.map((item, index) => {
+          {displayWatchlist.map((item, index) => {
             const isAlerted = alertedSymbols.has(item.symbol);
 
             return (
@@ -140,6 +174,7 @@ export function WatchlistTable({ watchlist }: WatchlistTableProps) {
                     isInWatchlist={true}
                     showTrashIcon={true}
                     type="icon"
+                    onWatchlistChange={handleWatchlistChange}
                   />
                 </TableCell>
               </TableRow>
