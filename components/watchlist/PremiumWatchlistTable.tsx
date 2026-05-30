@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { MockWatchlistStock } from "@/lib/mockWatchlistData";
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
@@ -14,12 +13,12 @@ interface PremiumWatchlistTableProps {
 export function PremiumWatchlistTable({ data, sortConfig }: PremiumWatchlistTableProps) {
   const sortedData = React.useMemo(() => {
     if (!sortConfig) return data;
-    
+
     return [...data].sort((a, b) => {
       const { key, direction } = sortConfig;
       let aVal: any = a[key];
       let bVal: any = b[key];
-      
+
       if (key === 'changePercent' || key === 'change' || key === 'currentPrice') {
         aVal = Number(aVal);
         bVal = Number(bVal);
@@ -79,7 +78,6 @@ export function PremiumWatchlistTable({ data, sortConfig }: PremiumWatchlistTabl
                   </td>
                   <td className="py-3 px-4 text-right">
                     <div className={cn("font-medium flex items-center justify-end gap-1", isPositive ? "text-emerald-400" : "text-red-400")}>
-                      {isPositive ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
                       {stock.change > 0 ? "+" : ""}{stock.change?.toFixed(2) || "0.00"}
                     </div>
                   </td>
