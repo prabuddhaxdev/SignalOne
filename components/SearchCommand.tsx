@@ -18,6 +18,7 @@ export default function SearchCommand({
   renderAs = "button",
   label = "Add stock",
   initialStocks,
+  className,
 }: SearchCommandProps) {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -81,11 +82,11 @@ export default function SearchCommand({
   return (
     <>
       {renderAs === "text" ? (
-        <span onClick={() => setOpen(true)} className="search-text">
+        <span onClick={() => setOpen(true)} className={className || "search-text"}>
           {label}
         </span>
       ) : (
-        <Button onClick={() => setOpen(true)} className="search-btn">
+        <Button onClick={() => setOpen(true)} className={className || "search-btn"}>
           {label}
         </Button>
       )}

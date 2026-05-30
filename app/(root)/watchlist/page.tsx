@@ -28,11 +28,14 @@ export default async function WatchlistPage() {
               <SearchCommand
                 initialStocks={initialStocks}
                 renderAs="button"
+                className="flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium transition-all shadow-[0_0_20px_rgba(37,99,235,0.2)] hover:shadow-[0_0_25px_rgba(37,99,235,0.4)] h-auto border-none"
                 label={
-                  <span className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium transition-all shadow-[0_0_20px_rgba(37,99,235,0.2)] hover:shadow-[0_0_25px_rgba(37,99,235,0.4)]">
-                    <Plus className="w-4 h-4" />
-                    Add Stock
-                  </span> as unknown as string
+                  (
+                    <>
+                      <Plus className="w-4 h-4" />
+                      Add Stock
+                    </>
+                  ) as unknown as string
                 }
               />
             </div>
