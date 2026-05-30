@@ -40,6 +40,9 @@ export async function getWatchlistWithData() {
           marketCap: stockData.marketCapFormatted,
           peRatio: stockData.peRatio,
           currency: stockData.currency,
+          ohlc: stockData.ohlc,
+          change: stockData.changeAbs,
+          prev: stockData.prev,
         };
       })
     );
