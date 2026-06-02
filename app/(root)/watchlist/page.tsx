@@ -3,6 +3,7 @@ import SearchCommand from "@/components/SearchCommand";
 import { ManageSymbolsPanel } from "@/components/watchlist/ManageSymbolsPanel";
 import { Plus } from "lucide-react";
 import { getWatchlistWithData } from "@/lib/actions/getWatchlistWithData.actions";
+import { CreateAlertModal } from "@/components/watchlist/CreateAlertModal";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ export default async function WatchlistPage() {
           </div>
 
           <div className="flex-shrink-0">
-            <div className="inline-flex">
+            <div className="inline-flex gap-3">
               <SearchCommand
                 initialStocks={initialStocks}
                 renderAs="button"
@@ -38,6 +39,7 @@ export default async function WatchlistPage() {
                   ) as unknown as string
                 }
               />
+              <CreateAlertModal />
             </div>
           </div>
         </div>
