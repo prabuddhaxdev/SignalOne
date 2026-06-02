@@ -1,16 +1,30 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Minus, BellPlus, BellRing, BellOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 
 interface PremiumWatchlistTableProps {
   data: any[];
   sortConfig: { key: string; direction: "asc" | "desc" } | null;
+  onAlert?: (symbol: string) => void;
 }
 
-export function PremiumWatchlistTable({ data, sortConfig }: PremiumWatchlistTableProps) {
+export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatchlistTableProps) {
+  const [activeAlerts, setActiveAlerts] = useState<Set<string>>(new Set());
+
+  const toggleAlert = (symbol: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveAlerts((prev) => {
+      const next = new Set(prev);
+      if (next.has(symbol)) next.delete(symbol);
+      else next.add(symbol);
+      return next;
+    });
+    if (onAlert) onAlert(symbol);
+  };
+
   const sortedData = React.useMemo(() => {
     if (!sortConfig) return data;
 
@@ -58,6 +72,7 @@ export function PremiumWatchlistTable({ data, sortConfig }: PremiumWatchlistTabl
               <th className="py-3 px-4 text-right">Chg%</th>
               <th className="py-3 px-4 text-right">OHLC</th>
               <th className="py-3 px-4 text-right">Prev</th>
+              <th className="py-3 px-4 text-right w-[100px]"></th>
             </tr>
           </thead>
           <tbody>
@@ -95,6 +110,31 @@ export function PremiumWatchlistTable({ data, sortConfig }: PremiumWatchlistTabl
                   <td className="py-3 px-4 text-right">
                     <div className="text-sm text-slate-400">{stock.prev?.toFixed(2) || "0.00"}</div>
                   </td>
+                  <td className="py-3 px-4 text-right">
+                    <button
+                      onClick={(e) => toggleAlert(stock.symbol, e)}
+                      className={cn(
+                        "group inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors border w-[115px]",
+                        activeAlerts.has(stock.symbol)
+                          ? "bg-yellow-500 border-yellow-500 text-slate-900 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400 hover:shadow-none"
+                          : "bg-yellow-500/10 border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-300"
+                      )}
+                    >
+                      {activeAlerts.has(stock.symbol) ? (
+                        <>
+                          <BellRing className="w-3.5 h-3.5 group-hover:hidden" />
+                          <BellOff className="w-3.5 h-3.5 hidden group-hover:block" />
+                          <span className="group-hover:hidden">Active</span>
+                          <span className="hidden group-hover:block">Remove</span>
+                        </>
+                      ) : (
+                        <>
+                          <BellPlus className="w-3.5 h-3.5" />
+                          <span className="whitespace-nowrap">Add Alert</span>
+                        </>
+                      )}
+                    </button>
+                  </td>
                 </motion.tr>
               );
             })}
@@ -130,6 +170,31 @@ export function PremiumWatchlistTable({ data, sortConfig }: PremiumWatchlistTabl
                   <span>O:{stock.ohlc?.o?.toFixed(1) || "0.0"}</span>
                   <span>H:{stock.ohlc?.h?.toFixed(1) || "0.0"}</span>
                 </div>
+              </div>
+              <div className="border-t border-slate-800/50 pt-3 flex justify-end">
+                <button
+                  onClick={(e) => toggleAlert(stock.symbol, e)}
+                  className={cn(
+                    "group inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium transition-colors border w-full sm:w-[125px]",
+                    activeAlerts.has(stock.symbol)
+                      ? "bg-yellow-500 border-yellow-500 text-slate-900 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400 hover:shadow-none"
+                      : "bg-yellow-500/10 border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-300"
+                  )}
+                >
+                  {activeAlerts.has(stock.symbol) ? (
+                    <>
+                      <BellRing className="w-4 h-4 group-hover:hidden" />
+                      <BellOff className="w-4 h-4 hidden group-hover:block" />
+                      <span className="group-hover:hidden">Active</span>
+                      <span className="hidden group-hover:block">Remove Alert</span>
+                    </>
+                  ) : (
+                    <>
+                      <BellPlus className="w-4 h-4" />
+                      <span className="whitespace-nowrap">Add Alert</span>
+                    </>
+                  )}
+                </button>
               </div>
             </motion.div>
           );

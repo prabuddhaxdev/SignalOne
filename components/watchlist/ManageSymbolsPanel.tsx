@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { ArrowDownUp } from "lucide-react";
-import { SymbolPill } from "./SymbolPill";
 import { PremiumWatchlistTable } from "./PremiumWatchlistTable";
 
 const SORT_OPTIONS = [
@@ -18,10 +17,6 @@ export function ManageSymbolsPanel({ initialData }: { initialData: any[] }) {
   const [stocks, setStocks] = useState(initialData || []);
   const [sortValue, setSortValue] = useState("symbol-asc");
   const [isSortOpen, setIsSortOpen] = useState(false);
-
-  const handleRemove = (symbol: string) => {
-    setStocks(stocks.filter((s) => s.symbol !== symbol));
-  };
 
   const handleAlert = (symbol: string) => {
     // Add alert logic
@@ -85,26 +80,9 @@ export function ManageSymbolsPanel({ initialData }: { initialData: any[] }) {
         </div>
       </div>
 
-      {/* Symbol Pills Row */}
-      <div className="px-6 py-4 border-b border-slate-800/60 bg-[#0b0e14]/50">
-        <div className="flex flex-wrap gap-2">
-          {stocks.map((stock) => (
-            <SymbolPill
-              key={stock.symbol}
-              symbol={stock.symbol}
-              onRemove={handleRemove}
-              onAlert={handleAlert}
-            />
-          ))}
-          {stocks.length === 0 && (
-            <div className="text-sm text-slate-500 py-1">No symbols tracked.</div>
-          )}
-        </div>
-      </div>
-
       {/* Table Section */}
       <div className="p-0 sm:p-2 md:p-4">
-        <PremiumWatchlistTable data={stocks} sortConfig={sortConfig} />
+        <PremiumWatchlistTable data={stocks} sortConfig={sortConfig} onAlert={handleAlert} />
       </div>
     </div>
   );
