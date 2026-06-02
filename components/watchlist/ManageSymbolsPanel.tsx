@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowDownUp } from "lucide-react";
 import { PremiumWatchlistTable } from "./PremiumWatchlistTable";
+import { getWatchlistWithData } from "@/lib/actions/getWatchlistWithData.actions";
 
 const SORT_OPTIONS = [
   { label: "A → Z", value: "symbol-asc" },
@@ -17,6 +18,23 @@ export function ManageSymbolsPanel({ initialData }: { initialData: any[] }) {
   const [stocks, setStocks] = useState(initialData || []);
   const [sortValue, setSortValue] = useState("symbol-asc");
   const [isSortOpen, setIsSortOpen] = useState(false);
+
+  useEffect(() => {
+    setStocks(initialData || []);
+  }, [initialData]);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const updatedData = await getWatchlistWithData();
+        setStocks(updatedData);
+      } catch (error) {
+        console.error("Failed to sync watchlist:", error);
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleAlert = (symbol: string) => {
     // Add alert logic
