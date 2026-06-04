@@ -22,25 +22,29 @@ export const signUpWithEmail = async ({
     });
 
     if (response) {
-      await inngest.send({
-        name: "app/user.created",
-        data: {
-          email,
-          name: fullName,
-          country,
-          investmentGoals,
-          riskTolerance,
-          preferredIndustry,
-        },
-      });
+      try {
+        await inngest.send({
+          name: "app/user.created",
+          data: {
+            email,
+            name: fullName,
+            country,
+            investmentGoals,
+            riskTolerance,
+            preferredIndustry,
+          },
+        });
+      } catch (inngestError) {
+        console.error("Warning: Failed to send event to Inngest:", inngestError);
+      }
 
       await auth.api.signInEmail({
         body: { email, password },
         headers: await headers(),
       });
     }
+    return { success: true, data: JSON.parse(JSON.stringify(response)) };
 
-    return { success: true, data: response };
   } catch (e: any) {
     console.log("Sign up failed", e);
     let errorMessage = e?.body?.message || e?.message || "Sign up failed";
@@ -68,7 +72,7 @@ export const signInWithEmail = async ({ email, password }: SignInFormData) => {
       headers: await headers(),
     });
 
-    return { success: true, data: response };
+    return { success: true, data: JSON.parse(JSON.stringify(response)) };
   } catch (e: any) {
     console.log("Sign in failed", e);
     let errorMessage = e?.body?.message || e?.message || "Sign in failed";
