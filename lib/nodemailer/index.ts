@@ -1,12 +1,33 @@
 import nodemailer from "nodemailer";
 import { NEWS_SUMMARY_EMAIL_TEMPLATE, WELCOME_EMAIL_TEMPLATE } from "@/lib/nodemailer/templates";
 
+
+// Verify transporter configuration
+if (!process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASSWORD) {
+  console.warn(
+    "⚠️ NODEMAILER_EMAIL or NODEMAILER_PASSWORD is not set. Email functionality will not work.",
+  );
+}
+
 export const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.NODEMAILER_EMAIL!,
     pass: process.env.NODEMAILER_PASSWORD!,
   },
+  // Add connection timeout and retry options
+  pool: true,
+  maxConnections: 1,
+  maxMessages: 3,
+});
+
+// Verify connection on startup
+transporter.verify((error, success) => {
+    if (error) {
+        console.error('❌ Nodemailer transporter verification failed:', error);
+    } else {
+        console.log('✅ Nodemailer transporter is ready to send emails');
+    }
 });
 
 export const sendWelcomeEmail = async ({
@@ -14,20 +35,32 @@ export const sendWelcomeEmail = async ({
   name,
   intro,
 }: WelcomeEmailData) => {
-  const htmlTemplate = WELCOME_EMAIL_TEMPLATE.replace("{{name}}", name).replace(
-    "{{intro}}",
-    intro
-  );
 
-  const mailOptions = {
-    from: `"SignalOne" <signalone@prabuddhaxdev.in>`,
-    to: email,
-    subject: `Welcome to SignalOne - your stock market toolkit is ready!`,
-    text: "Thanks for joining SignalOne",
-    html: htmlTemplate,
-  };
+  try {
+    if (!process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASSWORD) {
+      throw new Error("Email credentials not configured");
+    }
 
-  await transporter.sendMail(mailOptions);
+    const htmlTemplate = WELCOME_EMAIL_TEMPLATE.replace(
+      "{{name}}",
+      name,
+    ).replace("{{intro}}", intro);
+
+    const mailOptions = {
+      from: `"SignalOne" <signalone@prabuddhaxdev.in>`,
+      to: email,
+      subject: `Welcome to SignalOne - your advanced stock market research toolkit!`,
+      text: "Thanks for joining SignalOne",
+      html: htmlTemplate,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Welcome email sent successfully:", info.messageId);
+    return info;
+  } catch (error) {
+    console.error("❌ Failed to send welcome email:", error);
+    throw error;
+  }
 };
 
 
@@ -39,19 +72,31 @@ export const sendNewsSummaryEmail = async ({
   email: string;
   date: string;
   newsContent: string;
-}): Promise<void> => {
-  const htmlTemplate = NEWS_SUMMARY_EMAIL_TEMPLATE.replace(
-    "{{date}}",
-    date
-  ).replace("{{newsContent}}", newsContent);
+}) => {
 
-  const mailOptions = {
-    from: `"SignalOne News" <signalone@prabuddhaxdev.in>`,
-    to: email,
-    subject: `📈 Market News Summary Today - ${date}`,
-    text: `Today's market news summary from SignalOne`,
-    html: htmlTemplate,
-  };
+      try {
+        if (!process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASSWORD) {
+          throw new Error("Email credentials not configured");
+        }
 
-  await transporter.sendMail(mailOptions);
+        const htmlTemplate = NEWS_SUMMARY_EMAIL_TEMPLATE.replace(
+          "{{date}}",
+          date,
+        ).replace("{{newsContent}}", newsContent);
+
+        const mailOptions = {
+          from: `"SignalOne News" <signalone@prabuddhaxdev.in>`,
+          to: email,
+          subject: `📈 Market News Summary Today - ${date}`,
+          text: `Today's market news summary from SignalOne`,
+          html: htmlTemplate,
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        console.log("✅ News summary email sent successfully:", info.messageId);
+        return info;
+      } catch (error) {
+        console.error("❌ Failed to send news summary email:", error);
+        throw error;
+      }
 };
