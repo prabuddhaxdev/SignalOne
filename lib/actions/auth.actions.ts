@@ -55,10 +55,10 @@ export const signInWithEmail = async ({ email, password }: SignInFormData) => {
   try {
     const mongoose = await connectToDatabase();
     const db = mongoose.connection.db as Db;
-    
+
     // Check if user exists
     const user = await db.collection("user").findOne({ email: new RegExp(`^${email}$`, 'i') });
-    
+
     if (!user) {
       return { success: false, error: "Please Sign up first" };
     }
@@ -72,13 +72,72 @@ export const signInWithEmail = async ({ email, password }: SignInFormData) => {
   } catch (e: any) {
     console.log("Sign in failed", e);
     let errorMessage = e?.body?.message || e?.message || "Sign in failed";
-    
+
     // If we reached here, the user exists but sign in failed (likely wrong password)
     if (errorMessage.toLowerCase().includes("invalid email or password") || errorMessage.toLowerCase().includes("invalid password")) {
       errorMessage = "Password is wrong";
     }
-    
+
     return { success: false, error: errorMessage };
+  }
+};
+
+export const requestPasswordResetEmail = async ({
+  email,
+}: {
+  email: string;
+}) => {
+  if (!process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASSWORD) {
+    return { success: false, error: "Password reset email is not configured." };
+  }
+
+  try {
+    const configuredBaseUrl = process.env.BETTER_AUTH_URL;
+    const baseUrl =
+      configuredBaseUrl ||
+      (process.env.NODE_ENV !== "production" ? "http://localhost:3000" : null);
+
+    if (!baseUrl) {
+      return {
+        success: false,
+        error:
+          "BETTER_AUTH_URL must be configured before password reset emails can be sent.",
+      };
+    }
+
+    await auth.api.requestPasswordReset({
+      body: {
+        email,
+        redirectTo: `${baseUrl}/reset-password`,
+      },
+    });
+
+    return { success: true };
+  } catch (e) {
+    console.log("Password reset request failed", e);
+    return { success: false, error: "Unable to send password reset email." };
+  }
+};
+
+export const resetPasswordWithToken = async ({
+  token,
+  newPassword,
+}: {
+  token: string;
+  newPassword: string;
+}) => {
+  try {
+    await auth.api.resetPassword({
+      body: {
+        token,
+        newPassword,
+      },
+    });
+
+    return { success: true };
+  } catch (e) {
+    console.log("Password reset failed", e);
+    return { success: false, error: "Reset link is invalid or expired." };
   }
 };
 
