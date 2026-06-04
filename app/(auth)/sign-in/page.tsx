@@ -7,6 +7,7 @@ import FooterLink from "@/components/forms/FooterLink";
 import { signInWithEmail} from "@/lib/actions/auth.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const SignIn = () => {
   const router = useRouter();
@@ -91,6 +92,15 @@ const SignIn = () => {
             },
           }}
         />
+
+        <div className="flex justify-end -mt-3 text-xs">
+          <Link
+            href="/forgot-password"
+            className="text-yellow-400 hover:text-yellow-300 transition-colors font-medium"
+          >
+            Forgot your password?
+          </Link>
+        </div>
 
         <Button
           type="submit"

@@ -25,6 +25,14 @@ export const getAuth = async () => {
       minPasswordLength: 8,
       maxPasswordLength: 128,
       autoSignIn: true,
+      async sendResetPassword({ user, url, token }, request) {
+        const { sendPasswordResetEmail } = await import("@/lib/nodemailer/reset-password");
+        await sendPasswordResetEmail({
+          email: user.email,
+          name: user.name,
+          resetUrl: url,
+        });
+      },
     },
     plugins: [nextCookies()],
   });

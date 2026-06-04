@@ -6,7 +6,6 @@ export const NAV_ITEMS = [
   { href: "/watchlist", label: "Watchlist" },
 ];
 
-
 // Sign-up form select options
 export const INVESTMENT_GOALS = [
   { value: "Growth", label: "Growth" },
@@ -196,7 +195,6 @@ export const FOREX_WIDGET_CONFIG = {
   height: 600,
 };
 
-
 export const CRYPTO_HEATMAP_WIDGET_CONFIG = {
   dataSource: "Crypto",
   blockSize: "market_cap_calc",
@@ -212,7 +210,6 @@ export const CRYPTO_HEATMAP_WIDGET_CONFIG = {
   width: "100%",
   height: 600,
 };
-
 
 export const SYMBOL_INFO_WIDGET_CONFIG = (symbol: string) => ({
   symbol: symbol.toUpperCase(),
@@ -381,3 +378,12 @@ export const WATCHLIST_TABLE_HEADER = [
   "Alert",
   "Action",
 ];
+
+export const PASSWORD_VALIDATION = {
+  required: "Password is required",
+  minLength: { value: 8, message: "Password must be at least 8 characters" },
+  pattern: {
+    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+    message: "Password must include uppercase, lowercase, and a number",
+  },
+};
