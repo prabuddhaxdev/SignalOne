@@ -206,8 +206,8 @@ export const NEWS_SUMMARY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 border-color: #30333A !important;
             }
             .dark-cta {
-                background-color: #1f2937 !important;
-                border: 1px solid #374151 !important;
+                background-color: #212328 !important;
+                border: 1px solid #30333A !important;
             }
         }
         
@@ -274,7 +274,7 @@ export const NEWS_SUMMARY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             </h1>
                             
                             <!-- Date -->
-                            <p class="mobile-text dark-text-muted" style="margin: 0 0 30px 0; font-size: 14px; line-height: 1.4; color: #6b7280;">
+                            <p class="mobile-text dark-text-muted" style="margin: 0 0 30px 0; font-size: 14px; line-height: 1.4; color: #9095A1;">
                                 {{date}}
                             </p>
                             
@@ -291,7 +291,7 @@ export const NEWS_SUMMARY_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                     <a href="https://signalone.vercel.app" style="color: #CCDADC !important; text-decoration: underline;">Visit SignalOne</a>
                                 </p>
                                 <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    © 2025 SignalOne
+                                    © 2026 SignalOne
                                 </p>
                             </div>
                         </td>
@@ -345,8 +345,8 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 border-color: #30333A !important;
             }
             .dark-info-box {
-                background-color: #1f2937 !important;
-                border: 1px solid #374151 !important;
+                background-color: #212328 !important;
+                border: 1px solid #30333A !important;
             }
         }
         
@@ -441,16 +441,16 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                 <h2 class="dark-text" style="margin: 0 0 10px 0; font-size: 28px; font-weight: 700; color: #ffffff;">
                                     {{symbol}}
                                 </h2>
-                                <p class="dark-text-muted" style="margin: 0 0 20px 0; font-size: 16px; color: #6b7280;">
+                                <p class="dark-text-muted" style="margin: 0 0 20px 0; font-size: 16px; color: #9095A1;">
                                     {{company}}
                                 </p>
                                 
                                 <!-- Current Price -->
                                 <div style="margin-bottom: 20px;">
-                                    <p class="dark-text-muted" style="margin: 0 0 5px 0; font-size: 14px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    <p class="dark-text-muted" style="margin: 0 0 5px 0; font-size: 14px; color: #9095A1; text-transform: uppercase; letter-spacing: 0.5px;">
                                         Current Price
                                     </p>
-                                    <p class="mobile-price" style="margin: 0; font-size: 36px; font-weight: 700; color: #10b981;">
+                                    <p class="mobile-price" style="margin: 0; font-size: 36px; font-weight: 700; color: #0FEDBE;">
                                         {{currentPrice}}
                                     </p>
                                 </div>
@@ -461,20 +461,20 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                 <h3 class="dark-text" style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #ffffff;">
                                     Alert Details
                                 </h3>
-                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9ca3af;">
+                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9095A1;">
                                     <strong>Target Price:</strong> {{targetPrice}}
                                 </p>
-                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9ca3af;">
+                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9095A1;">
                                     <strong>Trigger:</strong> Price exceeded your upper threshold of {{targetPrice}}
                                 </p>
                             </div>
                             
                             <!-- Success Message -->
-                            <div style="background-color: #050505; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                            <div style="background-color: #050505; border: 1px solid #30333A; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
                                 <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #E8BA40;">
                                     Opportunity Alert!
                                 </h3>
-                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: #ccdadc;">
+                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC;">
                                     {{symbol}} has reached your target price! This could be a good time to review your position and consider taking profits or adjusting your strategy.
                                 </p>
                             </div>
@@ -483,7 +483,7 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 30px;">
                                 <tr>
                                     <td align="center">
-                                        <a href="https://signalone.vercel.app/" style="display: block; width: 100%; max-width: 100%; box-sizing: border-box; color: #000000; background-color: #E8BA40; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 500; line-height: 1; text-align: center;">
+                                        <a href="https://signalone.vercel.app/" style="display: block; width: 100%; max-width: 100%; box-sizing: border-box; color: #000000; background: linear-gradient(135deg, #FDD458 0%, #E8BA40 100%); text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 500; line-height: 1; text-align: center;">
                                             View Dashboard
                                         </a>
                                     </td>
@@ -493,7 +493,7 @@ export const STOCK_ALERT_UPPER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                              <!-- Footer Text -->
                             <div style="text-align: center; margin: 40px 0 0 0;">
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    You're receiving this because you subscribed to SignalOne news updates.
+                                    You're receiving this because you set a price alert on SignalOne.
                                 </p>
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
                                     <a href="#" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
@@ -554,8 +554,8 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 border-color: #30333A !important;
             }
             .dark-info-box {
-                background-color: #1f2937 !important;
-                border: 1px solid #374151 !important;
+                background-color: #212328 !important;
+                border: 1px solid #30333A !important;
             }
         }
         
@@ -650,16 +650,16 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                 <h2 class="dark-text" style="margin: 0 0 10px 0; font-size: 28px; font-weight: 700; color: #ffffff;">
                                     {{symbol}}
                                 </h2>
-                                <p class="dark-text-muted" style="margin: 0 0 20px 0; font-size: 16px; color: #6b7280;">
+                                <p class="dark-text-muted" style="margin: 0 0 20px 0; font-size: 16px; color: #9095A1;">
                                     {{company}}
                                 </p>
                                 
                                 <!-- Current Price -->
                                 <div style="margin-bottom: 20px;">
-                                    <p class="dark-text-muted" style="margin: 0 0 5px 0; font-size: 14px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    <p class="dark-text-muted" style="margin: 0 0 5px 0; font-size: 14px; color: #9095A1; text-transform: uppercase; letter-spacing: 0.5px;">
                                         Current Price
                                     </p>
-                                    <p class="mobile-price" style="margin: 0; font-size: 36px; font-weight: 700; color: #ef4444;">
+                                    <p class="mobile-price" style="margin: 0; font-size: 36px; font-weight: 700; color: #FF495B;">
                                         {{currentPrice}}
                                     </p>
                                 </div>
@@ -670,20 +670,20 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                 <h3 class="dark-text" style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #ffffff;">
                                     Alert Details
                                 </h3>
-                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9ca3af;">
+                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9095A1;">
                                     <strong>Target Price:</strong> {{targetPrice}}
                                 </p>
-                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9ca3af;">
+                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9095A1;">
                                     <strong>Trigger:</strong> Price dropped below your lower threshold of {{targetPrice}}
                                 </p>
                             </div>
                             
                             <!-- Opportunity Message -->
-                            <div style="background-color: #050505; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                            <div style="background-color: #050505; border: 1px solid #30333A; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
                                 <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #E8BA40;">
                                     Price Dropped
                                 </h3>
-                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: #ccdadc;">
+                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC;">
                                     {{symbol}} dropped below your target price. This might be a good time to buy.
                                 </p>
                             </div>
@@ -692,7 +692,7 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 30px;">
                                 <tr>
                                     <td align="center">
-                                        <a href="https://signalone.vercel.app/" style="display: block; width: 100%; max-width: 100%; box-sizing: border-box; background-color: #E8BA40; color: #000000; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 500; line-height: 1; text-align: center;">
+                                        <a href="https://signalone.vercel.app/" style="display: block; width: 100%; max-width: 100%; box-sizing: border-box; background: linear-gradient(135deg, #FDD458 0%, #E8BA40 100%); color: #000000; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 500; line-height: 1; text-align: center;">
                                             View Dashboard
                                         </a>
                                     </td>
@@ -702,7 +702,7 @@ export const STOCK_ALERT_LOWER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                              <!-- Footer Text -->
                             <div style="text-align: center; margin: 40px 0 0 0;">
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    You're receiving this because you subscribed to SignalOne news updates.
+                                    You're receiving this because you set a price alert on SignalOne.
                                 </p>
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
                                     <a href="#" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
@@ -763,8 +763,8 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 border-color: #30333A !important;
             }
             .dark-info-box {
-                background-color: #1f2937 !important;
-                border: 1px solid #374151 !important;
+                background-color: #212328 !important;
+                border: 1px solid #30333A !important;
             }
         }
         
@@ -826,7 +826,7 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                     <!-- Alert Header -->
                     <tr>
                         <td class="mobile-padding" style="padding: 0 40px 20px 40px;">
-                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #7c3aed; border-radius: 8px; padding: 20px;">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #5862FF; border-radius: 8px; padding: 20px;">
                                 <tr>
                                     <td align="center">
                                         <h1 class="mobile-title" style="margin: 0 0 10px 0; font-size: 24px; font-weight: 700; color: #ffffff; line-height: 1.2;">
@@ -850,23 +850,23 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                                 <h2 class="dark-text" style="margin: 0 0 10px 0; font-size: 28px; font-weight: 700; color: #ffffff;">
                                     {{symbol}}
                                 </h2>
-                                <p class="dark-text-muted" style="margin: 0 0 20px 0; font-size: 16px; color: #6b7280;">
+                                <p class="dark-text-muted" style="margin: 0 0 20px 0; font-size: 16px; color: #9095A1;">
                                     {{company}}
                                 </p>
                                 
                                 <!-- Current Volume -->
                                 <div style="margin-bottom: 20px;">
-                                    <p class="dark-text-muted" style="margin: 0 0 5px 0; font-size: 14px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    <p class="dark-text-muted" style="margin: 0 0 5px 0; font-size: 14px; color: #9095A1; text-transform: uppercase; letter-spacing: 0.5px;">
                                         Current Volume
                                     </p>
-                                    <p class="mobile-volume" style="margin: 0; font-size: 36px; font-weight: 700; color: #7c3aed;">
+                                    <p class="mobile-volume" style="margin: 0; font-size: 36px; font-weight: 700; color: #5862FF;">
                                         {{currentVolume}}M
                                     </p>
                                 </div>
                                 
                                 <!-- Current Price (smaller) -->
                                 <div class="dark-border" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #30333A;">
-                                    <p class="dark-text-secondary" style="margin: 0 0 5px 0; font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    <p class="dark-text-secondary" style="margin: 0 0 5px 0; font-size: 12px; color: #9095A1; text-transform: uppercase; letter-spacing: 0.5px;">
                                         Current Price
                                     </p>
                                     <p style="margin: 0; font-size: 18px; font-weight: 600; color: {{priceColor}};">
@@ -876,27 +876,27 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             </div>
                             
                             <!-- Alert Details -->
-                            <div class="dark-info-box" style="background-color: #1f2937; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                            <div class="dark-info-box" style="background-color: #212328; border: 1px solid #30333A; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
                                 <h3 class="dark-text" style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #ffffff;">
                                     Volume Spike Details
                                 </h3>
-                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9ca3af;">
+                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9095A1;">
                                     <strong>Trigger:</strong> {{alertMessage}}
                                 </p>
-                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9ca3af;">
+                                <p class="mobile-text dark-text-secondary" style="margin: 0 0 10px 0; font-size: 16px; line-height: 1.5; color: #9095A1;">
                                     <strong>Average Volume:</strong> {{averageVolume}}M shares
                                 </p>
-                                <p class="mobile-text dark-text-secondary" style="margin: 0; font-size: 16px; line-height: 1.5; color: #9ca3af;">
+                                <p class="mobile-text dark-text-secondary" style="margin: 0; font-size: 16px; line-height: 1.5; color: #9095A1;">
                                     <strong>Spike Detected:</strong> {{volumeSpike}} above normal trading activity
                                 </p>
                             </div>
                             
                             <!-- What This Means -->
-                            <div class="dark-info-box" style="background-color: #1f2937; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
-                                <h3 class="dark-text" style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #ffffff;">
+                            <div class="dark-info-box" style="background-color: #050505; border: 1px solid #30333A; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                                <h3 class="dark-text" style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #E8BA40;">
                                     💡 What This Means
                                 </h3>
-                                <p class="mobile-text dark-text-secondary" style="margin: 0; font-size: 16px; line-height: 1.5; color: #9ca3af;">
+                                <p class="mobile-text dark-text-secondary" style="margin: 0; font-size: 16px; line-height: 1.5; color: #CCDADC;">
                                     High volume often indicates increased investor interest, potential news events, or significant price movements. This could signal an opportunity to investigate what's driving the activity.
                                 </p>
                             </div>
@@ -905,7 +905,7 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 30px;">
                                 <tr>
                                     <td align="center">
-                                        <a href="https://signalone.vercel.app/" style="display: inline-block; background-color: #E8BA40; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: 500; line-height: 1;">
+                                        <a href="https://signalone.vercel.app/" style="display: block; width: 100%; max-width: 100%; box-sizing: border-box; background: linear-gradient(135deg, #FDD458 0%, #E8BA40 100%); color: #000000; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 500; line-height: 1; text-align: center;">
                                             View Dashboard
                                         </a>
                                     </td>
@@ -913,8 +913,8 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             </table>
                             
                             <!-- Disclaimer -->
-                            <div class="dark-info-box" style="background-color: #1f2937; border-radius: 6px; padding: 15px; margin-bottom: 20px; border: 1px solid #374151;">
-                                <p class="dark-text-muted" style="margin: 0; font-size: 13px; line-height: 1.4; color: #6b7280; text-align: center;">
+                            <div class="dark-info-box" style="background-color: #212328; border-radius: 6px; padding: 15px; margin-bottom: 20px; border: 1px solid #30333A;">
+                                <p class="dark-text-muted" style="margin: 0; font-size: 13px; line-height: 1.4; color: #9095A1; text-align: center;">
                                     <strong>Disclaimer:</strong> This alert is for informational purposes only and should not be considered investment advice. High volume doesn't guarantee price direction. Always do your own research before making investment decisions.
                                 </p>
                             </div>
@@ -922,7 +922,7 @@ export const VOLUME_ALERT_EMAIL_TEMPLATE = `<!DOCTYPE html>
                              <!-- Footer Text -->
                             <div style="text-align: center; margin: 40px 0 0 0;">
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
-                                    You're receiving this because you subscribed to SignalOne news updates.
+                                    You're receiving this because you set a volume alert on SignalOne.
                                 </p>
                                 <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important;">
                                     <a href="#" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
@@ -983,8 +983,8 @@ export const INACTIVE_USER_REMINDER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                 border-color: #30333A !important;
             }
             .dark-info-box {
-                background-color: #1f2937 !important;
-                border: 1px solid #374151 !important;
+                background-color: #212328 !important;
+                border: 1px solid #30333A !important;
             }
         }
         
@@ -1061,11 +1061,11 @@ export const INACTIVE_USER_REMINDER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             </p>
 
                             <!-- Additional Motivation -->
-                            <div class="dark-info-box" style="background-color: #050505; border: 1px solid #374151; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                            <div class="dark-info-box" style="background-color: #050505; border: 1px solid #30333A; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
                                 <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #E8BA40;">
                                     Market Update
                                 </h3>
-                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: #ccdadc;">
+                                <p class="mobile-text" style="margin: 0; font-size: 14px; line-height: 1.5; color: #CCDADC;">
                                     Markets have been active lately! Major indices have seen significant movements, and there might be opportunities in your tracked stocks that you don't want to miss.
                                 </p>
                             </div>
@@ -1079,7 +1079,7 @@ export const INACTIVE_USER_REMINDER_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 20px 0; width: 100%;">
                                 <tr>
                                     <td align="center" class="mobile-button">
-                                        <a href="{{dashboardUrl}}" style="display: inline-block; background: #E8BA40; color: #000000; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 500; line-height: 1; text-align: center;  width: 100%;">
+                                        <a href="{{dashboardUrl}}" style="display: block; width: 100%; background: linear-gradient(135deg, #FDD458 0%, #E8BA40 100%); color: #000000; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 500; line-height: 1; text-align: center; box-sizing: border-box;">
                                             Return to Dashboard
                                         </a>
                                     </td>
