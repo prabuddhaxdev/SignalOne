@@ -138,11 +138,6 @@ export function PremiumWatchlistTable({
               const h = stock.ohlc?.h || 0;
               const l = stock.ohlc?.l || 0;
               const c = stock.ohlc?.c || 0;
-              const range = h - l || 1;
-              const bodyMin = Math.min(o, c);
-              const bodyMax = Math.max(o, c);
-              const bodyLeft = ((bodyMin - l) / range) * 100;
-              const bodyWidth = ((bodyMax - bodyMin) / range) * 100;
               const isBullish = c >= o;
 
               return (
@@ -200,38 +195,22 @@ export function PremiumWatchlistTable({
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
-                    <div className="flex flex-col items-end gap-2">
-                      {/* OHLC Range Bar */}
-                      <div className="relative w-32 h-1 bg-slate-800 rounded-full">
-                        <div
-                          className={cn(
-                            "absolute top-1/2 -translate-y-1/2 h-2 rounded-sm transition-all",
-                            isBullish ? "bg-emerald-500" : "bg-red-500",
-                          )}
-                          style={{
-                            left: `${bodyLeft}%`,
-                            width: `${bodyWidth}%`,
-                          }}
-                        />
-                      </div>
-                      {/* OHLC Values */}
-                      <div className="flex items-center justify-end gap-2 text-xs font-mono">
-                        <span className="text-slate-500">O</span>
-                        <span className="text-slate-300">{o.toFixed(2)}</span>
-                        <span className="text-emerald-400">H</span>
-                        <span className="text-emerald-300">{h.toFixed(2)}</span>
-                        <span className="text-red-400">L</span>
-                        <span className="text-red-300">{l.toFixed(2)}</span>
-                        <span className="text-slate-500">C</span>
-                        <span
-                          className={cn(
-                            "font-semibold",
-                            isBullish ? "text-emerald-400" : "text-red-400",
-                          )}
-                        >
-                          {c.toFixed(2)}
-                        </span>
-                      </div>
+                    <div className="flex items-center justify-end gap-2 text-xs font-mono">
+                      <span className="text-slate-500">O</span>
+                      <span className="text-slate-300">{o.toFixed(2)}</span>
+                      <span className="text-emerald-400">H</span>
+                      <span className="text-emerald-300">{h.toFixed(2)}</span>
+                      <span className="text-red-400">L</span>
+                      <span className="text-red-300">{l.toFixed(2)}</span>
+                      <span className="text-slate-500">C</span>
+                      <span
+                        className={cn(
+                          "font-semibold",
+                          isBullish ? "text-emerald-400" : "text-red-400",
+                        )}
+                      >
+                        {c.toFixed(2)}
+                      </span>
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
@@ -281,11 +260,6 @@ export function PremiumWatchlistTable({
           const h = stock.ohlc?.h || 0;
           const l = stock.ohlc?.l || 0;
           const c = stock.ohlc?.c || 0;
-          const range = h - l || 1;
-          const bodyMin = Math.min(o, c);
-          const bodyMax = Math.max(o, c);
-          const bodyLeft = ((bodyMin - l) / range) * 100;
-          const bodyWidth = ((bodyMax - bodyMin) / range) * 100;
           const isBullish = c >= o;
           return (
             <motion.div
@@ -335,19 +309,7 @@ export function PremiumWatchlistTable({
                     {stock.prev?.toFixed(2) || "0.00"}
                   </span>
                 </div>
-                <div className="text-right flex flex-col items-end gap-2">
-                  <div className="relative w-24 h-1 bg-slate-800 rounded-full">
-                    <div
-                      className={cn(
-                        "absolute top-1/2 -translate-y-1/2 h-2 rounded-sm transition-all",
-                        isBullish ? "bg-emerald-500" : "bg-red-500",
-                      )}
-                      style={{
-                        left: `${bodyLeft}%`,
-                        width: `${bodyWidth}%`,
-                      }}
-                    />
-                  </div>
+                <div className="text-right">
                   <div className="flex items-center justify-end gap-1 text-[10px] font-mono">
                     <span className="text-slate-500">O</span>
                     <span className="text-slate-300">{o.toFixed(1)}</span>

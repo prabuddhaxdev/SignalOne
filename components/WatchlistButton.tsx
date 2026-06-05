@@ -2,6 +2,7 @@
 
 import { useDebounce } from "@/hooks/useDebounce";
 import { addToWatchlist, removeFromWatchlist } from "@/lib/actions/watchlist.actions";
+import { useRouter } from "next/navigation";
 
 import { StarIcon, Trash2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -19,6 +20,7 @@ const WatchlistButton = ({
   type = "button",
   onWatchlistChange,
 }: WatchlistButtonProps) => {
+  const router = useRouter();
   const [added, setAdded] = useState<boolean>(!!isInWatchlist);
 
   const label = useMemo(() => {
@@ -34,6 +36,7 @@ const WatchlistButton = ({
       : await addToWatchlist(symbol, company);
 
     if (result.success) {
+      router.refresh();
       toast.success(added ? "Removed from Watchlist" : "Added to Watchlist", {
         description: `${company} ${
           added ? "removed from" : "added to"

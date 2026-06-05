@@ -34,7 +34,7 @@ export async function getWatchlistWithData() {
 
         return {
           company: stockData.company,
-          symbol: stockData.symbol,
+          symbol: item.symbol,
           currentPrice: stockData.currentPrice,
           priceFormatted: stockData.priceFormatted,
           changeFormatted: stockData.changeFormatted,

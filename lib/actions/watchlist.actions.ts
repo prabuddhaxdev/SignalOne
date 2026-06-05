@@ -50,7 +50,17 @@ export async function removeFromWatchlist(symbol: string) {
     const userId = session.user.id;
 
     await connectToDatabase();
-    await Watchlist.findOneAndDelete({ userId, symbol: symbol.toUpperCase() });
+    const symbolUpper = symbol.toUpperCase();
+    const tickerOnly = symbolUpper.includes(":") ? symbolUpper.split(":")[1] : symbolUpper;
+
+    const result = await Watchlist.findOneAndDelete({
+      userId,
+      $or: [
+        { symbol: symbolUpper },
+        { symbol: tickerOnly }
+      ]
+    });
+
     revalidatePath("/watchlist");
     revalidatePath("/"); // In case it's used elsewhere
     return { success: true };
