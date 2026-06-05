@@ -1,15 +1,44 @@
-import { searchStocks } from "@/lib/actions/finnhub.actions";
+import { getNews, searchStocks } from "@/lib/actions/finnhub.actions";
 import SearchCommand from "@/components/SearchCommand";
 import { ManageSymbolsPanel } from "@/components/watchlist/ManageSymbolsPanel";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { getWatchlistWithData } from "@/lib/actions/getWatchlistWithData.actions";
 import { CreateAlertModal } from "@/components/watchlist/CreateAlertModal";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { auth } from "@/lib/better-auth/auth";
+import { Suspense } from "react";
+import NewsGrid from "@/components/watchlist/NewsGrid";
+import { getUserWatchlist } from "@/lib/actions/watchlist.actions";
+import { getUserAlerts } from "@/lib/actions/alert.actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function WatchlistPage() {
+   const session = await auth.api.getSession({
+     headers: await headers(),
+   });
+
+   if (!session) {
+     redirect("/sign-in");
+   }
+
+   const userId = session.user.id;
+
+     // Parallel data fetching
+    const [watchlistItems, alerts, news] = await Promise.all([
+        getUserWatchlist(userId),
+        getUserAlerts(userId),
+        getNews() // Initial news fetch
+    ]);
+
   const initialStocks = await searchStocks();
   const watchlist = await getWatchlistWithData();
+
+      const watchlistSymbols = watchlistItems.map((item: any) => item.symbol);
+
+    // Fallback news if watchlist has items
+    const relevantNews = watchlistSymbols.length > 0 ? await getNews(watchlistSymbols) : news;
 
   return (
     <div className="min-h-screen bg-[#06080c] text-slate-200">
@@ -49,7 +78,12 @@ export default async function WatchlistPage() {
           <ManageSymbolsPanel initialData={watchlist} />
         </div>
 
+         {/* News Section */}
+                    <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-gray-500" /></div>}>
+                        <NewsGrid news={relevantNews || []} />
+                    </Suspense>
+                </div>
       </div>
-    </div>
+
   );
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import { useDebounce } from "@/hooks/useDebounce";
-import { addToWatchList, removeFromWatchlist } from "@/lib/actions/watchlist.actions";
+import { addToWatchlist, removeFromWatchlist } from "@/lib/actions/watchlist.actions";
+
 import { StarIcon, Trash2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -30,7 +31,7 @@ const WatchlistButton = ({
   async function toggleWatchlist() {
     const result = added
       ? await removeFromWatchlist(symbol)
-      : await addToWatchList(symbol, company);
+      : await addToWatchlist(symbol, company);
 
     if (result.success) {
       toast.success(added ? "Removed from Watchlist" : "Added to Watchlist", {
@@ -53,7 +54,7 @@ const WatchlistButton = ({
     const nextAdded = !added;
     setAdded(nextAdded);
     onWatchlistChange?.(symbol, nextAdded);
-    
+
     if (nextAdded) {
       debouncedToggle();
     } else {

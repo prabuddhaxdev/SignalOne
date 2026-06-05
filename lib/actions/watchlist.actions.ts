@@ -1,14 +1,95 @@
 "use server";
 
-import { Watchlist } from "@/database/models/watchlist.model";
-import { connectToDatabase } from "@/database/mongoose";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "../better-auth/auth";
+import { connectToDatabase } from "@/database/mongoose";
+import { Watchlist } from "@/database/models/watchlist.model";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/lib/better-auth/auth";
+
+// -- CRUD Operations --
+
+export async function addToWatchlist(
+  symbol: string,
+  company: string,
+) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    if (!session?.user) throw new Error("Not authenticated");
+    const userId = session.user.id;
+
+    await connectToDatabase();
+
+    // Upsert to avoid duplicates/errors if it already exists
+    const newItem = await Watchlist.findOneAndUpdate(
+      { userId, symbol: symbol.toUpperCase() },
+      {
+        userId,
+        symbol: symbol.toUpperCase(),
+        company,
+        addedAt: new Date(),
+      },
+      { upsert: true, new: true },
+    );
+
+    revalidatePath("/watchlist");
+    return { success: true, data: JSON.parse(JSON.stringify(newItem)) };
+  } catch (error) {
+    console.error("Error adding to watchlist:", error);
+    throw new Error("Failed to add to watchlist");
+  }
+}
+
+export async function removeFromWatchlist(symbol: string) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    if (!session?.user) throw new Error("Not authenticated");
+    const userId = session.user.id;
+
+    await connectToDatabase();
+    await Watchlist.findOneAndDelete({ userId, symbol: symbol.toUpperCase() });
+    revalidatePath("/watchlist");
+    revalidatePath("/"); // In case it's used elsewhere
+    return { success: true };
+  } catch (error) {
+    console.error("Error removing from watchlist:", error);
+    throw new Error("Failed to remove from watchlist");
+  }
+}
+
+export async function getUserWatchlist(userId: string) {
+  try {
+    await connectToDatabase();
+    const watchlist = await Watchlist.find({ userId }).sort({ addedAt: -1 });
+    return JSON.parse(JSON.stringify(watchlist));
+  } catch (error) {
+    console.error("Error fetching watchlist:", error);
+    return [];
+  }
+}
+
+// Check if a symbol is in the user's watchlist
+export async function isStockInWatchlist(userId: string, symbol: string) {
+  try {
+    await connectToDatabase();
+    const item = await Watchlist.findOne({
+      userId,
+      symbol: symbol.toUpperCase(),
+    });
+    return !!item;
+  } catch (error) {
+    console.error("Error checking watchlist status:", error);
+    return false;
+  }
+}
+
+// -- Legacy Support (if needed by other components) --
 
 export async function getWatchlistSymbolsByEmail(
-  email: string
+  email: string,
 ): Promise<string[]> {
   if (!email) return [];
 
@@ -32,84 +113,5 @@ export async function getWatchlistSymbolsByEmail(
   } catch (err) {
     console.error("getWatchlistSymbolsByEmail error:", err);
     return [];
-  }
-}
-
-
-export async function addToWatchList(symbol: string, company: string) {
-  try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-    if (!session?.user) redirect("/sign-in");
-
-    // Check if stock already exists in watchlist
-    const existingItem = await Watchlist.findOne({
-      userId: session.user.id,
-      symbol: symbol.toUpperCase(),
-    });
-
-    if (existingItem)
-      return { success: false, error: "Stock already in watchlist" };
-
-    // Add to watchlist
-    const newItem = new Watchlist({
-      userId: session.user.id,
-      symbol: symbol.toUpperCase(),
-      company: company.trim(),
-    });
-
-    await newItem.save();
-    revalidatePath("/watchlist");
-
-    return { success: true, message: "Stock added to watchlist" };
-  } catch (error) {
-    console.error("Error adding to watchlist:", error);
-    throw new Error("Failed to add stock to watchlist");
-  }
-}
-
-export async function removeFromWatchlist(symbol: string) {
-  try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-    if (!session?.user) redirect("/sign-in");
-
-    // Remove from watchlist - handle both full symbol and ticker-only formats
-    const upSymbol = symbol.toUpperCase();
-    const tickerOnly = upSymbol.includes(":") ? upSymbol.split(":")[1] : upSymbol;
-
-    await Watchlist.deleteMany({
-      userId: session.user.id,
-      $or: [
-        { symbol: upSymbol },
-        { symbol: tickerOnly }
-      ]
-    });
-    revalidatePath("/watchlist");
-
-    return { success: true, message: "Stock removed from watchlist" };
-  } catch (error) {
-    console.error("Error removing from watchlist:", error);
-    throw new Error("Failed to remove stock from watchlist");
-  }
-}
-
-export async function getUserWatchlist() {
-  try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-    if (!session?.user) redirect("/sign-in");
-
-    const watchlist = await Watchlist.find({ userId: session.user.id })
-      .sort({ addedAt: -1 })
-      .lean();
-
-    return JSON.parse(JSON.stringify(watchlist));
-  } catch (error) {
-    console.error("Error fetching watchlist:", error);
-    throw new Error("Failed to fetch watchlist");
   }
 }
