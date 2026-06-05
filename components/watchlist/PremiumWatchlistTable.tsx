@@ -1,18 +1,29 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowDownRight, ArrowUpRight, Minus, BellPlus, BellRing, BellOff } from "lucide-react";
+import { BellPlus, BellRing, BellOff, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { removeFromWatchlist } from "@/lib/actions/watchlist.actions";
 
 interface PremiumWatchlistTableProps {
   data: any[];
   sortConfig: { key: string; direction: "asc" | "desc" } | null;
   onAlert?: (symbol: string) => void;
+  onRemoveFromWatchlist?: (symbol: string) => void;
 }
 
-export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatchlistTableProps) {
+export function PremiumWatchlistTable({
+  data,
+  sortConfig,
+  onAlert,
+  onRemoveFromWatchlist,
+}: PremiumWatchlistTableProps) {
+  const router = useRouter();
   const [activeAlerts, setActiveAlerts] = useState<Set<string>>(new Set());
+  const [removedSymbols, setRemovedSymbols] = useState<Set<string>>(new Set());
 
   const toggleAlert = (symbol: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -25,18 +36,46 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
     if (onAlert) onAlert(symbol);
   };
 
-  const sortedData = React.useMemo(() => {
-    if (!sortConfig) return data;
+  const handleRemoveFromWatchlist = async (
+    symbol: string,
+    company: string,
+    e: React.MouseEvent,
+  ) => {
+    e.stopPropagation();
+    setRemovedSymbols((prev) => new Set(prev).add(symbol));
+    toast.promise(removeFromWatchlist(symbol), {
+      loading: "Removing from watchlist...",
+      success: (data) => {
+        if (data.success) {
+          onRemoveFromWatchlist?.(symbol);
+          router.refresh();
+          return `${company} removed from watchlist`;
+        }
+        throw new Error(data.message);
+      },
+      error: (err) => err.message || "Failed to remove from watchlist",
+    });
+  };
 
-    return [...data].sort((a, b) => {
+  const sortedData = React.useMemo(() => {
+    const filteredData = data.filter(
+      (item) => !removedSymbols.has(item.symbol),
+    );
+    if (!sortConfig) return filteredData;
+
+    return [...filteredData].sort((a, b) => {
       const { key, direction } = sortConfig;
       let aVal: any = a[key];
       let bVal: any = b[key];
 
-      if (key === 'changePercent' || key === 'change' || key === 'currentPrice') {
+      if (
+        key === "changePercent" ||
+        key === "change" ||
+        key === "currentPrice"
+      ) {
         aVal = Number(aVal);
         bVal = Number(bVal);
-      } else if (key === 'symbol') {
+      } else if (key === "symbol") {
         aVal = String(aVal).toLowerCase();
         bVal = String(bVal).toLowerCase();
       }
@@ -45,7 +84,7 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
       if (aVal > bVal) return direction === "asc" ? 1 : -1;
       return 0;
     });
-  }, [data, sortConfig]);
+  }, [data, sortConfig, removedSymbols]);
 
   if (!data || data.length === 0) {
     return (
@@ -53,8 +92,24 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
         <div className="w-16 h-16 mb-4 rounded-full bg-slate-800/50 flex items-center justify-center">
           <span className="text-2xl">📋</span>
         </div>
-        <h3 className="text-lg font-medium text-slate-200 mb-1">Your watchlist is empty</h3>
+        <h3 className="text-lg font-medium text-slate-200 mb-1">
+          Your watchlist is empty
+        </h3>
         <p className="text-sm">Add stocks to start tracking.</p>
+      </div>
+    );
+  }
+
+  if (sortedData.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-4 text-center text-slate-400">
+        <div className="w-16 h-16 mb-4 rounded-full bg-slate-800/50 flex items-center justify-center">
+          <span className="text-2xl">📋</span>
+        </div>
+        <h3 className="text-lg font-medium text-slate-200 mb-1">
+          All symbols removed
+        </h3>
+        <p className="text-sm">Refresh to see your watchlist again.</p>
       </div>
     );
   }
@@ -66,7 +121,8 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-slate-800 text-xs font-medium text-slate-400 uppercase tracking-wider">
-              <th className="py-3 px-4 w-[20%]">Name</th>
+              <th className="py-3 px-4 w-[5%]"></th>
+              <th className="py-3 px-4 w-[15%]">Name</th>
               <th className="py-3 px-4 text-right">Value</th>
               <th className="py-3 px-4 text-right">Change</th>
               <th className="py-3 px-4 text-right">Chg%</th>
@@ -78,6 +134,17 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
           <tbody>
             {sortedData.map((stock) => {
               const isPositive = stock.change >= 0;
+              const o = stock.ohlc?.o || 0;
+              const h = stock.ohlc?.h || 0;
+              const l = stock.ohlc?.l || 0;
+              const c = stock.ohlc?.c || 0;
+              const range = h - l || 1;
+              const bodyMin = Math.min(o, c);
+              const bodyMax = Math.max(o, c);
+              const bodyLeft = ((bodyMin - l) / range) * 100;
+              const bodyWidth = ((bodyMax - bodyMin) / range) * 100;
+              const isBullish = c >= o;
+
               return (
                 <motion.tr
                   initial={{ opacity: 0, y: 10 }}
@@ -86,29 +153,91 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
                   className="group border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors cursor-pointer"
                 >
                   <td className="py-3 px-4">
-                    <div className="font-semibold text-slate-200">{stock.symbol}</div>
+                    <button
+                      onClick={(e) =>
+                        handleRemoveFromWatchlist(
+                          stock.symbol,
+                          stock.company || stock.symbol,
+                          e,
+                        )
+                      }
+                      className="text-yellow-400 hover:text-red-400 transition-colors"
+                      title="Remove from watchlist"
+                    >
+                      <Star className="w-4 h-4 fill-current" />
+                    </button>
                   </td>
-                  <td className="py-3 px-4 text-right">
-                    <div className="font-medium text-slate-100">{stock.currentPrice?.toFixed(2) || "0.00"}</div>
-                  </td>
-                  <td className="py-3 px-4 text-right">
-                    <div className={cn("font-medium flex items-center justify-end gap-1", isPositive ? "text-emerald-400" : "text-red-400")}>
-                      {stock.change > 0 ? "+" : ""}{stock.change?.toFixed(2) || "0.00"}
+                  <td className="py-3 px-4">
+                    <div className="font-semibold text-slate-200">
+                      {stock.symbol}
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
-                    <div className={cn("font-medium", isPositive ? "text-emerald-400" : "text-red-400")}>
-                      {stock.changePercent > 0 ? "+" : ""}{stock.changePercent?.toFixed(2) || "0.00"}%
+                    <div className="font-medium text-slate-100">
+                      {stock.currentPrice?.toFixed(2) || "0.00"}
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
-                    <div className="text-[10px] sm:text-xs text-slate-500 font-mono flex flex-col items-end leading-tight">
-                      <div><span className="text-slate-600">O</span> {stock.ohlc?.o?.toFixed(2) || "0.00"} <span className="text-slate-600 ml-1">H</span> {stock.ohlc?.h?.toFixed(2) || "0.00"}</div>
-                      <div><span className="text-slate-600">L</span> {stock.ohlc?.l?.toFixed(2) || "0.00"} <span className="text-slate-600 ml-1">C</span> {stock.ohlc?.c?.toFixed(2) || "0.00"}</div>
+                    <div
+                      className={cn(
+                        "font-medium flex items-center justify-end gap-1",
+                        isPositive ? "text-emerald-400" : "text-red-400",
+                      )}
+                    >
+                      {stock.change > 0 ? "+" : ""}
+                      {stock.change?.toFixed(2) || "0.00"}
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
-                    <div className="text-sm text-slate-400">{stock.prev?.toFixed(2) || "0.00"}</div>
+                    <div
+                      className={cn(
+                        "font-medium",
+                        isPositive ? "text-emerald-400" : "text-red-400",
+                      )}
+                    >
+                      {stock.changePercent > 0 ? "+" : ""}
+                      {stock.changePercent?.toFixed(2) || "0.00"}%
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    <div className="flex flex-col items-end gap-2">
+                      {/* OHLC Range Bar */}
+                      <div className="relative w-32 h-1 bg-slate-800 rounded-full">
+                        <div
+                          className={cn(
+                            "absolute top-1/2 -translate-y-1/2 h-2 rounded-sm transition-all",
+                            isBullish ? "bg-emerald-500" : "bg-red-500",
+                          )}
+                          style={{
+                            left: `${bodyLeft}%`,
+                            width: `${bodyWidth}%`,
+                          }}
+                        />
+                      </div>
+                      {/* OHLC Values */}
+                      <div className="flex items-center justify-end gap-2 text-xs font-mono">
+                        <span className="text-slate-500">O</span>
+                        <span className="text-slate-300">{o.toFixed(2)}</span>
+                        <span className="text-emerald-400">H</span>
+                        <span className="text-emerald-300">{h.toFixed(2)}</span>
+                        <span className="text-red-400">L</span>
+                        <span className="text-red-300">{l.toFixed(2)}</span>
+                        <span className="text-slate-500">C</span>
+                        <span
+                          className={cn(
+                            "font-semibold",
+                            isBullish ? "text-emerald-400" : "text-red-400",
+                          )}
+                        >
+                          {c.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    <div className="text-sm text-slate-400">
+                      {stock.prev?.toFixed(2) || "0.00"}
+                    </div>
                   </td>
                   <td className="py-3 px-4 text-right">
                     <button
@@ -117,7 +246,7 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
                         "group inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors border w-[115px]",
                         activeAlerts.has(stock.symbol)
                           ? "bg-yellow-500 border-yellow-500 text-slate-900 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400 hover:shadow-none"
-                          : "bg-yellow-500/10 border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-300"
+                          : "bg-yellow-500/10 border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-300",
                       )}
                     >
                       {activeAlerts.has(stock.symbol) ? (
@@ -125,7 +254,9 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
                           <BellRing className="w-3.5 h-3.5 group-hover:hidden" />
                           <BellOff className="w-3.5 h-3.5 hidden group-hover:block" />
                           <span className="group-hover:hidden">Active</span>
-                          <span className="hidden group-hover:block">Remove</span>
+                          <span className="hidden group-hover:block">
+                            Remove
+                          </span>
                         </>
                       ) : (
                         <>
@@ -146,6 +277,16 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
       <div className="md:hidden flex flex-col gap-3">
         {sortedData.map((stock) => {
           const isPositive = stock.change >= 0;
+          const o = stock.ohlc?.o || 0;
+          const h = stock.ohlc?.h || 0;
+          const l = stock.ohlc?.l || 0;
+          const c = stock.ohlc?.c || 0;
+          const range = h - l || 1;
+          const bodyMin = Math.min(o, c);
+          const bodyMax = Math.max(o, c);
+          const bodyLeft = ((bodyMin - l) / range) * 100;
+          const bodyWidth = ((bodyMax - bodyMin) / range) * 100;
+          const isBullish = c >= o;
           return (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -154,21 +295,76 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
               className="bg-slate-900/50 border border-slate-800 rounded-lg p-4 flex flex-col gap-3"
             >
               <div className="flex justify-between items-start">
-                <div className="font-semibold text-lg text-slate-200">{stock.symbol}</div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={(e) =>
+                      handleRemoveFromWatchlist(
+                        stock.symbol,
+                        stock.company || stock.symbol,
+                        e,
+                      )
+                    }
+                    className="text-yellow-400 hover:text-red-400 transition-colors"
+                    title="Remove from watchlist"
+                  >
+                    <Star className="w-4 h-4 fill-current" />
+                  </button>
+                  <div className="font-semibold text-lg text-slate-200">
+                    {stock.symbol}
+                  </div>
+                </div>
                 <div className="text-right">
-                  <div className="font-medium text-slate-100 text-lg">{stock.currentPrice?.toFixed(2) || "0.00"}</div>
-                  <div className={cn("text-sm font-medium flex items-center justify-end gap-1", isPositive ? "text-emerald-400" : "text-red-400")}>
-                    {stock.changePercent > 0 ? "+" : ""}{stock.changePercent?.toFixed(2) || "0.00"}%
+                  <div className="font-medium text-slate-100 text-lg">
+                    {stock.currentPrice?.toFixed(2) || "0.00"}
+                  </div>
+                  <div
+                    className={cn(
+                      "text-sm font-medium flex items-center justify-end gap-1",
+                      isPositive ? "text-emerald-400" : "text-red-400",
+                    )}
+                  >
+                    {stock.changePercent > 0 ? "+" : ""}
+                    {stock.changePercent?.toFixed(2) || "0.00"}%
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 text-xs text-slate-400 border-t border-slate-800/50 pt-2">
+              <div className="grid grid-cols-2 gap-3 text-xs text-slate-400 border-t border-slate-800/50 pt-2">
                 <div>
-                  <span className="text-slate-500">Prev</span> <span className="text-slate-300 ml-1">{stock.prev?.toFixed(2) || "0.00"}</span>
+                  <span className="text-slate-500">Prev</span>{" "}
+                  <span className="text-slate-300 ml-1">
+                    {stock.prev?.toFixed(2) || "0.00"}
+                  </span>
                 </div>
-                <div className="text-right font-mono flex gap-2 justify-end">
-                  <span>O:{stock.ohlc?.o?.toFixed(1) || "0.0"}</span>
-                  <span>H:{stock.ohlc?.h?.toFixed(1) || "0.0"}</span>
+                <div className="text-right flex flex-col items-end gap-2">
+                  <div className="relative w-24 h-1 bg-slate-800 rounded-full">
+                    <div
+                      className={cn(
+                        "absolute top-1/2 -translate-y-1/2 h-2 rounded-sm transition-all",
+                        isBullish ? "bg-emerald-500" : "bg-red-500",
+                      )}
+                      style={{
+                        left: `${bodyLeft}%`,
+                        width: `${bodyWidth}%`,
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-end gap-1 text-[10px] font-mono">
+                    <span className="text-slate-500">O</span>
+                    <span className="text-slate-300">{o.toFixed(1)}</span>
+                    <span className="text-emerald-400">H</span>
+                    <span className="text-emerald-300">{h.toFixed(1)}</span>
+                    <span className="text-red-400">L</span>
+                    <span className="text-red-300">{l.toFixed(1)}</span>
+                    <span className="text-slate-500">C</span>
+                    <span
+                      className={cn(
+                        "font-semibold",
+                        isBullish ? "text-emerald-400" : "text-red-400",
+                      )}
+                    >
+                      {c.toFixed(1)}
+                    </span>
+                  </div>
                 </div>
               </div>
               <div className="border-t border-slate-800/50 pt-3 flex justify-end">
@@ -178,7 +374,7 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
                     "group inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium transition-colors border w-full sm:w-[125px]",
                     activeAlerts.has(stock.symbol)
                       ? "bg-yellow-500 border-yellow-500 text-slate-900 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400 hover:shadow-none"
-                      : "bg-yellow-500/10 border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-300"
+                      : "bg-yellow-500/10 border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-300",
                   )}
                 >
                   {activeAlerts.has(stock.symbol) ? (
@@ -186,7 +382,9 @@ export function PremiumWatchlistTable({ data, sortConfig, onAlert }: PremiumWatc
                       <BellRing className="w-4 h-4 group-hover:hidden" />
                       <BellOff className="w-4 h-4 hidden group-hover:block" />
                       <span className="group-hover:hidden">Active</span>
-                      <span className="hidden group-hover:block">Remove Alert</span>
+                      <span className="hidden group-hover:block">
+                        Remove Alert
+                      </span>
                     </>
                   ) : (
                     <>

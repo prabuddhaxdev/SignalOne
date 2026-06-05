@@ -41,6 +41,10 @@ export function ManageSymbolsPanel({ initialData }: { initialData: any[] }) {
     console.log(`Alert triggered for ${symbol}`);
   };
 
+  const handleRemoveFromWatchlist = (symbol: string) => {
+    setStocks(prev => prev.filter(s => s.symbol !== symbol));
+  };
+
   const sortConfig = React.useMemo(() => {
     const [key, direction] = sortValue.split("-");
     return { key, direction: direction as "asc" | "desc" };
@@ -71,9 +75,9 @@ export function ManageSymbolsPanel({ initialData }: { initialData: any[] }) {
 
           {isSortOpen && (
             <>
-              <div 
-                className="fixed inset-0 z-40" 
-                onClick={() => setIsSortOpen(false)} 
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setIsSortOpen(false)}
               />
               <div className="absolute right-0 mt-2 w-48 bg-[#131722] border border-slate-800 rounded-lg shadow-xl z-50 py-1 overflow-hidden">
                 {SORT_OPTIONS.map((option) => (
@@ -100,7 +104,12 @@ export function ManageSymbolsPanel({ initialData }: { initialData: any[] }) {
 
       {/* Table Section */}
       <div className="p-0 sm:p-2 md:p-4">
-        <PremiumWatchlistTable data={stocks} sortConfig={sortConfig} onAlert={handleAlert} />
+        <PremiumWatchlistTable
+          data={stocks}
+          sortConfig={sortConfig}
+          onAlert={handleAlert}
+          onRemoveFromWatchlist={handleRemoveFromWatchlist}
+        />
       </div>
     </div>
   );
