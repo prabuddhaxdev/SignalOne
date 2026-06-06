@@ -11,6 +11,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { getStocksDetails } from "@/lib/actions/finnhub.actions";
 
 export function CreateAlertModal({
   open,
@@ -27,6 +28,8 @@ export function CreateAlertModal({
   const [alertType, setAlertType] = useState("Price");
   const [condition, setCondition] = useState("Greater than");
   const [threshold, setThreshold] = useState("");
+  const [currentPrice, setCurrentPrice] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const controlled = open !== undefined;
   const modalOpen = controlled ? open : isOpen;
@@ -49,16 +52,59 @@ export function CreateAlertModal({
     }
   }, [modalOpen]);
 
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (stockSymbol) {
+        try {
+          const data = await getStocksDetails(stockSymbol);
+          if (data) {
+            setCurrentPrice(data.currentPrice);
+          } else {
+            setCurrentPrice(null);
+          }
+        } catch (e) {
+          setCurrentPrice(null);
+        }
+      } else {
+        setCurrentPrice(null);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [stockSymbol]);
+
   const resetForm = () => {
     setAlertName("");
     setStockSymbol("");
     setAlertType("Price");
     setCondition("Greater than");
     setThreshold("");
+    setCurrentPrice(null);
+    setError(null);
   };
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
+    if (currentPrice === null) {
+      setError("Unable to verify current price. Please check the symbol.");
+      return;
+    }
+
+    const threshVal = parseFloat(threshold);
+    if (isNaN(threshVal)) {
+      setError("Please enter a valid numeric threshold.");
+      return;
+    }
+
+    const diff = Math.abs(threshVal - currentPrice);
+    const limit = currentPrice * 0.05;
+
+    if (diff < limit) {
+      setError(`Threshold must be at least 5% away from the current price (${currentPrice.toFixed(2)}).`);
+      return;
+    }
+
     console.log("Creating alert:", { alertName, stockSymbol, alertType, condition, threshold });
     setModalOpen(false);
     resetForm();
@@ -151,7 +197,14 @@ export function CreateAlertModal({
 
             {/* Threshold Value */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-slate-300">Threshold Value</label>
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-medium text-slate-300">Threshold Value</label>
+                {currentPrice !== null && (
+                  <span className="text-xs text-slate-500">
+                    Current: <span className="text-slate-300 font-mono">{currentPrice.toFixed(2)}</span>
+                  </span>
+                )}
+              </div>
               <input
                 type="text"
                 required
@@ -162,6 +215,12 @@ export function CreateAlertModal({
               />
             </div>
           </div>
+
+          {error && (
+            <div className="px-5 pb-4 text-red-400 text-xs font-medium bg-red-500/10 border-t border-red-500/20 py-2">
+              {error}
+            </div>
+          )}
 
           <DialogFooter className="p-5 pt-2">
             <button
