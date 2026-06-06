@@ -30,7 +30,7 @@ export default function WatchlistClient({
 
   return (
     <div className="min-h-screen bg-[#06080c] text-slate-200">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-8 mb-10 md:mb-20">
 
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">

@@ -132,7 +132,6 @@ export function PremiumWatchlistTable({
               <th className="py-3 px-4 text-right">Value</th>
               <th className="py-3 px-4 text-right">Change</th>
               <th className="py-3 px-4 text-right">Chg%</th>
-              <th className="py-3 px-4 text-right">OHLC</th>
               <th className="py-3 px-4 text-right">Prev</th>
               <th className="py-3 px-4 text-right w-[100px]"></th>
             </tr>
@@ -140,11 +139,6 @@ export function PremiumWatchlistTable({
           <tbody>
             {sortedData.map((stock) => {
               const isPositive = stock.change >= 0;
-              const o = stock.ohlc?.o || 0;
-              const h = stock.ohlc?.h || 0;
-              const l = stock.ohlc?.l || 0;
-              const c = stock.ohlc?.c || 0;
-              const isBullish = c >= o;
 
               return (
                 <motion.tr
@@ -201,25 +195,6 @@ export function PremiumWatchlistTable({
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
-                    <div className="flex items-center justify-end gap-2 text-xs font-mono">
-                      <span className="text-slate-500">O</span>
-                      <span className="text-slate-300">{o.toFixed(2)}</span>
-                      <span className="text-emerald-400">H</span>
-                      <span className="text-emerald-300">{h.toFixed(2)}</span>
-                      <span className="text-red-400">L</span>
-                      <span className="text-red-300">{l.toFixed(2)}</span>
-                      <span className="text-slate-500">C</span>
-                      <span
-                        className={cn(
-                          "font-semibold",
-                          isBullish ? "text-emerald-400" : "text-red-400",
-                        )}
-                      >
-                        {c.toFixed(2)}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 text-right">
                     <div className="text-sm text-slate-400">
                       {stock.prev?.toFixed(2) || "0.00"}
                     </div>
@@ -262,11 +237,6 @@ export function PremiumWatchlistTable({
       <div className="md:hidden flex flex-col gap-3">
         {sortedData.map((stock) => {
           const isPositive = stock.change >= 0;
-          const o = stock.ohlc?.o || 0;
-          const h = stock.ohlc?.h || 0;
-          const l = stock.ohlc?.l || 0;
-          const c = stock.ohlc?.c || 0;
-          const isBullish = c >= o;
           return (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -308,31 +278,12 @@ export function PremiumWatchlistTable({
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3 text-xs text-slate-400 border-t border-slate-800/50 pt-2">
+              <div className="flex justify-between text-xs text-slate-400 border-t border-slate-800/50 pt-2">
                 <div>
-                  <span className="text-slate-500">Prev</span>{" "}
+                  <span className="text-slate-500">Prev: </span>
                   <span className="text-slate-300 ml-1">
                     {stock.prev?.toFixed(2) || "0.00"}
                   </span>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-center justify-end gap-1 text-[10px] font-mono">
-                    <span className="text-slate-500">O</span>
-                    <span className="text-slate-300">{o.toFixed(1)}</span>
-                    <span className="text-emerald-400">H</span>
-                    <span className="text-emerald-300">{h.toFixed(1)}</span>
-                    <span className="text-red-400">L</span>
-                    <span className="text-red-300">{l.toFixed(1)}</span>
-                    <span className="text-slate-500">C</span>
-                    <span
-                      className={cn(
-                        "font-semibold",
-                        isBullish ? "text-emerald-400" : "text-red-400",
-                      )}
-                    >
-                      {c.toFixed(1)}
-                    </span>
-                  </div>
                 </div>
               </div>
               <div className="border-t border-slate-800/50 pt-3 flex justify-end">
