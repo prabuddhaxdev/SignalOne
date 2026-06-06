@@ -40,6 +40,7 @@ export default async function WatchlistPage() {
       initialStocks={initialStocks}
       watchlist={watchlist}
       relevantNews={relevantNews || []}
+      alerts={alerts}
     />
   );
 }

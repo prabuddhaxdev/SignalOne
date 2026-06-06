@@ -4,7 +4,7 @@ import path from "path";
 // Load .env
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
-import { sendPasswordResetEmail } from "../lib/nodemailer/reset-password";
+import { sendPasswordResetEmail } from "./lib/nodemailer/reset-password";
 
 async function test() {
   console.log("Testing email sending...");

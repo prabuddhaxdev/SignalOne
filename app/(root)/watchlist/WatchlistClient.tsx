@@ -5,6 +5,7 @@ import SearchCommand from "@/components/SearchCommand";
 import { ManageSymbolsPanel } from "@/components/watchlist/ManageSymbolsPanel";
 import { Loader2, Plus } from "lucide-react";
 import { CreateAlertModal } from "@/components/watchlist/CreateAlertModal";
+import AlertsPanel from "@/components/watchlist/AlertsPanel";
 import { Suspense } from "react";
 import NewsGrid from "@/components/watchlist/NewsGrid";
 
@@ -12,10 +13,12 @@ export default function WatchlistClient({
   initialStocks,
   watchlist,
   relevantNews,
+  alerts,
 }: {
   initialStocks: any[];
   watchlist: any[];
   relevantNews: any[];
+  alerts: any[];
 }) {
   const [alertModalOpen, setAlertModalOpen] = useState(false);
   const [alertModalSymbol, setAlertModalSymbol] = useState("");
@@ -62,15 +65,24 @@ export default function WatchlistClient({
           </div>
         </div>
 
-        {/* Main Watchlist Container */}
-        <div className="w-full">
-          <ManageSymbolsPanel initialData={watchlist} onOpenAlertModal={handleOpenAlertModal} />
-        </div>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Left Column: Symbols and News */}
+          <div className="col-span-1 lg:col-span-3 space-y-8">
+            <div className="w-full">
+              <ManageSymbolsPanel initialData={watchlist} onOpenAlertModal={handleOpenAlertModal} />
+            </div>
 
-        {/* News Section */}
-        <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-gray-500" /></div>}>
-          <NewsGrid news={relevantNews} />
-        </Suspense>
+            <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-gray-500" /></div>}>
+              <NewsGrid news={relevantNews} />
+            </Suspense>
+          </div>
+
+          {/* Right Column: Alerts Panel */}
+          <div className="col-span-1 lg:col-span-1">
+            <AlertsPanel alerts={alerts} />
+          </div>
+        </div>
       </div>
     </div>
   );

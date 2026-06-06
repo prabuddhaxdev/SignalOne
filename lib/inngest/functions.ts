@@ -1,17 +1,24 @@
 import { inngest } from "./client";
+import mongoose from "mongoose";
 
 import {
   NEWS_SUMMARY_EMAIL_PROMPT,
   PERSONALIZED_WELCOME_EMAIL_PROMPT,
 } from "./prompts";
 
-import { sendNewsSummaryEmail, sendWelcomeEmail } from "../nodemailer/index";
+import {
+  sendNewsSummaryEmail,
+  sendWelcomeEmail, sendStockAlertEmail,
+} from "../nodemailer/index";
 
 import { getFormattedTodayDate } from "../utils";
 
-import { getNews } from "../actions/finnhub.actions";
+import { getNews, getStocksDetails } from "../actions/finnhub.actions";
 import { getWatchlistSymbolsByEmail } from "../actions/watchlist.actions";
 import { getAllUsersForNewsEmail } from "../actions/user.actions";
+import { getActiveAlerts, markAlertAsTriggered } from "../actions/alert.actions";
+import { connectToDatabase } from "@/database/mongoose";
+
 
 export const sendSignUpEmail = inngest.createFunction(
   { id: "sign-up-email", event: "app/user.created" as any },
@@ -61,9 +68,9 @@ export const sendSignUpEmail = inngest.createFunction(
 );
 
 export const sendDailyNewsSummary = inngest.createFunction(
-  { 
-    id: "daily-news-summary", 
-    triggers: [{ event: "app/send.daily.news" }, { cron: "0 12 * * *" }] as any 
+  {
+    id: "daily-news-summary",
+    triggers: [{ event: "app/send.daily.news" }, { cron: "0 12 * * *" }] as any
   },
   async ({ step }) => {
     // Step #1: Get all users for news delivery
@@ -74,10 +81,10 @@ export const sendDailyNewsSummary = inngest.createFunction(
     // Step #2: For each user, get watchlist symbols -> fetch news (fallback to general)
     const results = await step.run("fetch-user-news", async () => {
       const perUser: Array<{
-        user: User;
-        articles: MarketNewsArticle[];
+        user: any;
+        articles: any[];
       }> = [];
-      for (const user of users as User[]) {
+      for (const user of users as any[]) {
         try {
           const symbols = await getWatchlistSymbolsByEmail(user.email);
           let articles = await getNews(symbols);
@@ -99,7 +106,7 @@ export const sendDailyNewsSummary = inngest.createFunction(
 
     // Step #3: Summarize news via AI for each user
     const userNewsSummaries: {
-      user: User;
+      user: any;
       newsContent: string | null;
     }[] = [];
 
@@ -148,43 +155,109 @@ export const sendDailyNewsSummary = inngest.createFunction(
   }
 );
 
-export const handleStockAlert = inngest.createFunction(
-  { 
-    id: "handle-stock-alert", 
-    event: "app/alert.created" as any,
-    cancelOn: [
-      {
-        event: "app/alert.removed",
-        match: "data.symbol",
-      },
-    ],
+export const monitorStockAlerts = inngest.createFunction(
+  {
+    id: "monitor-stock-alerts",
+    triggers: [{ cron: "*/15 * * * *" }] as any
   },
-  async ({ event, step }) => {
-    const { symbol, company, threshold, alertType, userEmail } = event.data;
-
-    // We sleep to simulate a long-running monitoring process.
-    // This allows the "Remove Alert" action to actually cancel this function run.
-    await step.sleep("wait-for-monitoring", "24h");
-    
-    await step.run("send-alert-confirmation", async () => {
-      // Simulate sending an email or notification
-      console.log(`Alert triggered for ${symbol} (${company}) at ${threshold} (${alertType})`);
+  async ({ step }) => {
+    const alerts = await step.run("fetch-active-alerts", async () => {
+      return await getActiveAlerts();
     });
 
-    return { success: true, symbol };
-  }
-);
+    if (!alerts || alerts.length === 0) {
+      return { success: true, message: "No active alerts to monitor" };
+    }
 
-export const handleStockAlertRemoval = inngest.createFunction(
-  { id: "handle-stock-alert-removal", event: "app/alert.removed" as any },
-  async ({ event, step }) => {
-    const { symbol, userEmail } = event.data;
+    // Group alerts by symbol to minimize API calls
+    const symbolGroups: Record<string, any[]> = {};
+    for (const alert of alerts) {
+      const sym = alert.symbol;
+      if (!symbolGroups[sym]) symbolGroups[sym] = [];
+      symbolGroups[sym].push(alert);
+    }
 
-    await step.run("log-alert-removal", async () => {
-      console.log(`Alert removed for ${symbol} by ${userEmail}`);
+    const uniqueSymbols = Object.keys(symbolGroups);
+    const priceMap: Record<string, any> = {};
+
+    // Fetch prices for all unique symbols
+    await step.run("fetch-prices", async () => {
+      for (const sym of uniqueSymbols) {
+        try {
+          const details = await getStocksDetails(sym);
+          if (details) {
+            priceMap[sym] = details;
+          }
+        } catch (e) {
+          console.error(`Error fetching price for ${sym}:`, e);
+        }
+      }
     });
 
-    return { success: true, symbol };
+    const triggeredAlerts: any[] = [];
+
+    // Evaluate alerts
+    for (const sym of uniqueSymbols) {
+      const details = priceMap[sym];
+      if (!details) continue;
+
+      const currentPrice = details.currentPrice;
+      const symbolAlerts = symbolGroups[sym];
+
+      for (const alert of symbolAlerts) {
+        const isTriggered = alert.condition === "ABOVE"
+          ? currentPrice >= alert.targetPrice
+          : currentPrice <= alert.targetPrice;
+
+        if (isTriggered) {
+          triggeredAlerts.push({ alert, details });
+        }
+      }
+    }
+
+    // Handle triggers
+    await step.run("process-triggers", async () => {
+      for (const { alert, details } of triggeredAlerts) {
+        try {
+          const mdb = await connectToDatabase();
+          const db = mdb.connection.db;
+
+          const userId = alert.userId;
+          const userQuery = mongoose.Types.ObjectId.isValid(userId)
+            ? { _id: new mongoose.Types.ObjectId(userId) }
+            : { _id: userId };
+
+          const user = await db.collection("user").findOne(userQuery);
+
+          if (!user || !user.email) {
+            console.error(`No user email found for userId ${userId}`);
+            continue;
+          }
+
+          // Send alert email
+          await sendStockAlertEmail({
+            email: user.email,
+            symbol: alert.symbol,
+            company: details.company,
+            currentPrice: details.priceFormatted,
+            targetPrice: String(alert.targetPrice),
+            condition: alert.condition,
+            timestamp: getFormattedTodayDate(),
+          });
+
+          // Mark as triggered
+          await markAlertAsTriggered(alert._id);
+        } catch (e) {
+          console.error(`Error processing trigger for alert ${alert._id}:`, e);
+        }
+      }
+    });
+
+    return {
+      success: true,
+      processed: uniqueSymbols.length,
+      triggered: triggeredAlerts.length,
+    };
   }
 );
 

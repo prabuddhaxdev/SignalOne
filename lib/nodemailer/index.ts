@@ -1,5 +1,10 @@
 import nodemailer from "nodemailer";
-import { NEWS_SUMMARY_EMAIL_TEMPLATE, WELCOME_EMAIL_TEMPLATE } from "@/lib/nodemailer/templates";
+import {
+  NEWS_SUMMARY_EMAIL_TEMPLATE,
+  WELCOME_EMAIL_TEMPLATE,
+  STOCK_ALERT_UPPER_EMAIL_TEMPLATE,
+  STOCK_ALERT_LOWER_EMAIL_TEMPLATE
+} from "@/lib/nodemailer/templates";
 
 
 // Verify transporter configuration
@@ -99,4 +104,54 @@ export const sendNewsSummaryEmail = async ({
         console.error("❌ Failed to send news summary email:", error);
         throw error;
       }
+};
+
+export const sendStockAlertEmail = async ({
+  email,
+  symbol,
+  company,
+  currentPrice,
+  targetPrice,
+  condition,
+  timestamp,
+}: {
+  email: string;
+  symbol: string;
+  company: string;
+  currentPrice: string;
+  targetPrice: string;
+  condition: "ABOVE" | "BELOW";
+  timestamp: string;
+}) => {
+  try {
+    if (!process.env.NODEMAILER_EMAIL || !process.env.NODEMAILER_PASSWORD) {
+      throw new Error("Email credentials not configured");
+    }
+
+    const template = condition === "ABOVE"
+      ? STOCK_ALERT_UPPER_EMAIL_TEMPLATE
+      : STOCK_ALERT_LOWER_EMAIL_TEMPLATE;
+
+    const htmlTemplate = template
+      .replace("{{symbol}}", symbol)
+      .replace("{{company}}", company)
+      .replace("{{currentPrice}}", currentPrice)
+      .replace("{{targetPrice}}", targetPrice)
+      .replace("{{timestamp}}", timestamp);
+
+    const mailOptions = {
+      from: `"SignalOne Alerts" <signalone@prabuddhaxdev.in>`,
+      to: email,
+      subject: `📈 Price Alert: ${symbol} Hit ${condition === "ABOVE" ? "Upper" : "Lower"} Target`,
+      text: `${symbol} has reached your target price of ${targetPrice}. Current price: ${currentPrice}`,
+      html: htmlTemplate,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Stock alert email sent successfully:", info.messageId);
+    return info;
+  } catch (error) {
+    console.error("❌ Failed to send stock alert email:", error);
+    throw error;
+  }
 };
