@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BellPlus } from "lucide-react";
 import {
   Dialog,
@@ -12,13 +12,42 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
-export function CreateAlertModal() {
-  const [open, setOpen] = useState(false);
+export function CreateAlertModal({
+  open,
+  onOpenChange,
+  symbol,
+}: {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  symbol?: string;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
   const [alertName, setAlertName] = useState("");
   const [stockSymbol, setStockSymbol] = useState("");
   const [alertType, setAlertType] = useState("Price");
   const [condition, setCondition] = useState("Greater than");
   const [threshold, setThreshold] = useState("");
+
+  const controlled = open !== undefined;
+  const modalOpen = controlled ? open : isOpen;
+  const setModalOpen = controlled
+    ? (o: boolean) => {
+        setIsOpen(o);
+        onOpenChange?.(o);
+      }
+    : setIsOpen;
+
+  useEffect(() => {
+    if (symbol !== undefined) {
+      setStockSymbol(symbol);
+    }
+  }, [symbol]);
+
+  useEffect(() => {
+    if (!modalOpen) {
+      resetForm();
+    }
+  }, [modalOpen]);
 
   const resetForm = () => {
     setAlertName("");
@@ -31,7 +60,7 @@ export function CreateAlertModal() {
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Creating alert:", { alertName, stockSymbol, alertType, condition, threshold });
-    setOpen(false);
+    setModalOpen(false);
     resetForm();
   };
 
@@ -44,7 +73,7 @@ export function CreateAlertModal() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
+    <Dialog open={modalOpen} onOpenChange={setModalOpen}>
       <DialogTrigger asChild>
         <button
           className="flex items-center justify-center gap-2 px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-full font-bold transition-all border border-slate-700 h-auto shadow-[0_0_15px_rgba(0,0,0,0.2)]"

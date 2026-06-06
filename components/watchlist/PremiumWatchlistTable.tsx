@@ -27,13 +27,19 @@ export function PremiumWatchlistTable({
 
   const toggleAlert = (symbol: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setActiveAlerts((prev) => {
+    setActiveAlerts(prev => {
+      const adding = !prev.has(symbol);
       const next = new Set(prev);
-      if (next.has(symbol)) next.delete(symbol);
-      else next.add(symbol);
+      if (adding) {
+        next.add(symbol);
+      } else {
+        next.delete(symbol);
+      }
+      if (adding && onAlert) {
+        onAlert(symbol);
+      }
       return next;
     });
-    if (onAlert) onAlert(symbol);
   };
 
   const handleRemoveFromWatchlist = async (

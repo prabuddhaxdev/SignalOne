@@ -14,7 +14,13 @@ const SORT_OPTIONS = [
   { label: "Change % Desc", value: "changePercent-desc" },
 ];
 
-export function ManageSymbolsPanel({ initialData }: { initialData: any[] }) {
+export function ManageSymbolsPanel({
+  initialData,
+  onOpenAlertModal
+}: {
+  initialData: any[];
+  onOpenAlertModal?: (symbol: string) => void;
+}) {
   const [stocks, setStocks] = useState(initialData || []);
   const [sortValue, setSortValue] = useState("symbol-asc");
   const [isSortOpen, setIsSortOpen] = useState(false);
@@ -39,6 +45,7 @@ export function ManageSymbolsPanel({ initialData }: { initialData: any[] }) {
   const handleAlert = (symbol: string) => {
     // Add alert logic
     console.log(`Alert triggered for ${symbol}`);
+    onOpenAlertModal?.(symbol);
   };
 
   const handleRemoveFromWatchlist = (symbol: string) => {
@@ -46,9 +53,14 @@ export function ManageSymbolsPanel({ initialData }: { initialData: any[] }) {
   };
 
   const sortConfig = React.useMemo(() => {
-    const [key, direction] = sortValue.split("-");
+    const [key, direction] = splitSortValue(sortValue);
     return { key, direction: direction as "asc" | "desc" };
   }, [sortValue]);
+
+  function splitSortValue(value: string) {
+    const parts = value.split("-");
+    return [parts[0], parts[1]] as [string, "asc" | "desc"];
+  }
 
   return (
     <div className="bg-[#0b0e14] border border-slate-800/60 rounded-xl shadow-2xl overflow-hidden flex flex-col backdrop-blur-sm">
