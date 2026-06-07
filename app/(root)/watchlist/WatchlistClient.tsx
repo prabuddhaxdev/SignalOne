@@ -25,7 +25,11 @@ export default function WatchlistClient({
   const [alertedSymbols, setAlertedSymbols] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const symbols = new Set(alerts.map((a: any) => a.symbol));
+    const symbols = new Set(
+      alerts
+        .filter((a: any) => a.active)
+        .map((a: any) => a.symbol)
+    );
     setAlertedSymbols(symbols);
   }, [alerts]);
 

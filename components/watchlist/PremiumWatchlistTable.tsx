@@ -50,7 +50,6 @@ export function PremiumWatchlistTable({
         }
       );
     } else {
-      addAlertedSymbol(symbol);
       if (onAlert) {
         onAlert(symbol);
       }
