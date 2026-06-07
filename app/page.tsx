@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import Hero from "@/components/landing/Hero";
 import Features from "@/components/landing/Features";
 import HowItWorks from "@/components/landing/HowItWorks";
@@ -24,9 +25,9 @@ export default async function Home() {
   } : null;
 
   return (
-    <main className="bg-gray-900 min-h-screen">
+    <main className="bg-gray-900 min-h-screen flex flex-col">
       <Header user={user} />
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full flex-grow">
         <Hero />
         <Features />
         <HowItWorks />
@@ -34,6 +35,7 @@ export default async function Home() {
         <Testimonials />
         <CTA />
       </div>
+      <Footer />
     </main>
   );
 }
