@@ -146,6 +146,7 @@ export function PremiumWatchlistTable({
               <th className="py-3 px-4 text-right">Value</th>
               <th className="py-3 px-4 text-right">Change</th>
               <th className="py-3 px-4 text-right">Chg%</th>
+              <th className="py-3 px-4 text-right">P/E</th>
               <th className="py-3 px-4 text-right">Prev</th>
               <th className="py-3 px-4 text-right w-[100px]"></th>
             </tr>
@@ -206,6 +207,11 @@ export function PremiumWatchlistTable({
                     >
                       {stock.changePercent > 0 ? "+" : ""}
                       {stock.changePercent?.toFixed(2) || "0.00"}%
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    <div className="text-sm text-slate-300">
+                      {stock.peRatio || "—"}
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
@@ -293,6 +299,12 @@ export function PremiumWatchlistTable({
                 </div>
               </div>
               <div className="flex justify-between text-xs text-slate-400 border-t border-slate-800/50 pt-2">
+                <div>
+                  <span className="text-slate-500">P/E: </span>
+                  <span className="text-slate-300 ml-1">
+                    {stock.peRatio || "—"}
+                  </span>
+                </div>
                 <div>
                   <span className="text-slate-500">Prev: </span>
                   <span className="text-slate-300 ml-1">
