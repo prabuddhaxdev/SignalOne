@@ -66,13 +66,13 @@ export default function AlertsPanel({ alerts, onRefresh }: AlertsPanelProps) {
                         {alert.symbol}
                       </div >
                       <div className="text-xs text-gray-400">
-                        Target: {formatPrice(alert.targetPrice, alert.currency)}
+                        Target: {alert.alertType === "Stock P/E" ? alert.targetPrice : formatPrice(alert.targetPrice, alert.currency)}
                       </div >
                     </div >
                   </div >
                   <div className="mt-2 text-xs text-yellow-500 font-medium">
-                    Condition: Price {alert.condition.toLowerCase()}{" "}
-                    {formatPrice(alert.targetPrice, alert.currency)}
+                    Condition: {alert.alertType === "Stock P/E" ? "P/E" : "Price"} {alert.condition.toLowerCase()}{" "}
+                    {alert.alertType === "Stock P/E" ? alert.targetPrice : formatPrice(alert.targetPrice, alert.currency)}
                   </div >
                   <div className="text-[10px] text-gray-500 mt-1">
                     Active until{" "}
