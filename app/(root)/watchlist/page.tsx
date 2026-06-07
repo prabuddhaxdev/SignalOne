@@ -1,4 +1,4 @@
-import { getNews, searchStocks } from "@/lib/actions/finnhub.actions";
+import { getNews, searchStocks, getStocksDetails } from "@/lib/actions/finnhub.actions";
 import { getWatchlistWithData } from "@/lib/actions/getWatchlistWithData.actions";
 import { getUserWatchlist } from "@/lib/actions/watchlist.actions";
 import { getUserAlerts } from "@/lib/actions/alert.actions";
@@ -21,11 +21,21 @@ export default async function WatchlistPage() {
   const userId = session.user.id;
 
   // Parallel data fetching
-  const [watchlistItems, alerts, news] = await Promise.all([
+  const [watchlistItems, rawAlerts, news] = await Promise.all([
     getUserWatchlist(userId),
     getUserAlerts(userId),
     getNews() // Initial news fetch
   ]);
+
+  const alerts = await Promise.all(
+    rawAlerts.map(async (alert: any) => {
+      const details = await getStocksDetails(alert.symbol);
+      return {
+        ...alert,
+        currency: details?.currency || "USD",
+      };
+    })
+  );
 
   const initialStocks = await searchStocks();
   const watchlist = await getWatchlistWithData();

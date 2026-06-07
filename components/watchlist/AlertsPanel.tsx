@@ -3,18 +3,12 @@
 import { useState } from "react";
 import { Trash2, Bell, Edit2, Check, X } from "lucide-react";
 import { deleteAlert, updateAlert } from "@/lib/actions/alert.actions";
+import { formatPrice } from "@/lib/utils";
 
 interface AlertsPanelProps {
   alerts: any[];
   onRefresh?: () => void;
 }
-
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(value);
-};
 
 export default function AlertsPanel({ alerts, onRefresh }: AlertsPanelProps) {
   const [editingAlertId, setEditingAlertId] = useState<string | null>(null);
@@ -68,13 +62,13 @@ export default function AlertsPanel({ alerts, onRefresh }: AlertsPanelProps) {
                         {alert.symbol}
                       </div >
                       <div className="text-xs text-gray-400">
-                        Target: {formatCurrency(alert.targetPrice)}
+                        Target: {formatPrice(alert.targetPrice, alert.currency)}
                       </div >
                     </div >
                   </div >
                   <div className="mt-2 text-xs text-yellow-500 font-medium">
                     Condition: Price {alert.condition.toLowerCase()}{" "}
-                    {formatCurrency(alert.targetPrice)}
+                    {formatPrice(alert.targetPrice, alert.currency)}
                   </div >
                   <div className="text-[10px] text-gray-500 mt-1">
                     Active until{" "}
