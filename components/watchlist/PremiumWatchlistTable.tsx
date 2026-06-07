@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { removeFromWatchlist } from "@/lib/actions/watchlist.actions";
 import { deleteAlertBySymbol } from "@/lib/actions/alert.actions";
+import { formatPrice } from "@/lib/utils";
 
 interface PremiumWatchlistTableProps {
   data: any[];
@@ -183,7 +184,7 @@ export function PremiumWatchlistTable({
                   </td>
                   <td className="py-3 px-4 text-right">
                     <div className="font-medium text-slate-100">
-                      {stock.currentPrice?.toFixed(2) || "0.00"}
+                      {stock.currentPrice !== undefined ? formatPrice(stock.currentPrice, stock.currency) : "0.00"}
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
@@ -194,7 +195,7 @@ export function PremiumWatchlistTable({
                       )}
                     >
                       {stock.change > 0 ? "+" : ""}
-                      {stock.change?.toFixed(2) || "0.00"}
+                      {stock.change !== undefined ? formatPrice(stock.change, stock.currency) : "0.00"}
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
@@ -210,7 +211,7 @@ export function PremiumWatchlistTable({
                   </td>
                   <td className="py-3 px-4 text-right">
                     <div className="text-sm text-slate-400">
-                      {stock.prev?.toFixed(2) || "0.00"}
+                      {stock.prev !== undefined ? formatPrice(stock.prev, stock.currency) : "0.00"}
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
@@ -279,7 +280,7 @@ export function PremiumWatchlistTable({
                 </div>
                 <div className="text-right">
                   <div className="font-medium text-slate-100 text-lg">
-                    {stock.currentPrice?.toFixed(2) || "0.00"}
+                    {stock.currentPrice !== undefined ? formatPrice(stock.currentPrice, stock.currency) : "0.00"}
                   </div>
                   <div
                     className={cn(
@@ -296,7 +297,7 @@ export function PremiumWatchlistTable({
                 <div>
                   <span className="text-slate-500">Prev: </span>
                   <span className="text-slate-300 ml-1">
-                    {stock.prev?.toFixed(2) || "0.00"}
+                    {stock.prev !== undefined ? formatPrice(stock.prev, stock.currency) : "0.00"}
                   </span>
                 </div>
               </div>

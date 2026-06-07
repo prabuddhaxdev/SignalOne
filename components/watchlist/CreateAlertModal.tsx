@@ -11,6 +11,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { formatPrice } from "@/lib/utils";
 import { getStocksDetails } from "@/lib/actions/finnhub.actions";
 import { createAlert } from "@/lib/actions/alert.actions";
 import { toast } from "sonner";
@@ -33,6 +34,8 @@ export function CreateAlertModal({
   const [condition, setCondition] = useState("Greater than");
   const [threshold, setThreshold] = useState("");
   const [currentPrice, setCurrentPrice] = useState<number | null>(null);
+  const [currency, setCurrency] = useState("USD");
+  const [exchange, setExchange] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const controlled = open !== undefined;
@@ -63,11 +66,17 @@ export function CreateAlertModal({
           const data = await getStocksDetails(stockSymbol);
           if (data) {
             setCurrentPrice(data.currentPrice);
+            setCurrency(data.currency);
+            setExchange(data.exchange);
           } else {
             setCurrentPrice(null);
+            setCurrency("USD");
+            setExchange(null);
           }
         } catch (e) {
           setCurrentPrice(null);
+          setCurrency("USD");
+          setExchange(null);
         }
       } else {
         setCurrentPrice(null);
@@ -83,6 +92,8 @@ export function CreateAlertModal({
     setCondition("Greater than");
     setThreshold("");
     setCurrentPrice(null);
+    setCurrency("USD");
+    setExchange(null);
     setError(null);
   };
 
@@ -226,7 +237,9 @@ export function CreateAlertModal({
                 <label className="text-sm font-medium text-slate-300">Threshold Value</label>
                 {currentPrice !== null && (
                   <span className="text-xs text-slate-500">
-                    Current: <span className="text-slate-300 font-mono">{currentPrice.toFixed(2)}</span>
+                    Current: <span className="text-slate-300 font-mono">
+                      {formatPrice(currentPrice, currency)}
+                    </span>
                   </span>
                 )}
               </div>
