@@ -13,6 +13,9 @@ interface PremiumWatchlistTableProps {
   sortConfig: { key: string; direction: "asc" | "desc" } | null;
   onAlert?: (symbol: string) => void;
   onRemoveFromWatchlist?: (symbol: string) => void;
+  alertedSymbols: Set<string>;
+  addAlertedSymbol: (symbol: string) => void;
+  removeAlertedSymbol: (symbol: string) => void;
 }
 
 export function PremiumWatchlistTable({
@@ -20,26 +23,23 @@ export function PremiumWatchlistTable({
   sortConfig,
   onAlert,
   onRemoveFromWatchlist,
+  alertedSymbols,
+  addAlertedSymbol,
+  removeAlertedSymbol,
 }: PremiumWatchlistTableProps) {
   const router = useRouter();
-  const [activeAlerts, setActiveAlerts] = useState<Set<string>>(new Set());
   const [removedSymbols, setRemovedSymbols] = useState<Set<string>>(new Set());
 
   const toggleAlert = (symbol: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setActiveAlerts(prev => {
-      const adding = !prev.has(symbol);
-      const next = new Set(prev);
-      if (adding) {
-        next.add(symbol);
-      } else {
-        next.delete(symbol);
-      }
-      if (adding && onAlert) {
+    if (alertedSymbols.has(symbol)) {
+      removeAlertedSymbol(symbol);
+    } else {
+      addAlertedSymbol(symbol);
+      if (onAlert) {
         onAlert(symbol);
       }
-      return next;
-    });
+    }
   };
 
   const handleRemoveFromWatchlist = async (
@@ -204,12 +204,12 @@ export function PremiumWatchlistTable({
                       onClick={(e) => toggleAlert(stock.symbol, e)}
                       className={cn(
                         "group inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors border w-[115px]",
-                        activeAlerts.has(stock.symbol)
+                        alertedSymbols.has(stock.symbol)
                           ? "bg-yellow-500 border-yellow-500 text-slate-900 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400 hover:shadow-none"
                           : "bg-yellow-500/10 border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-300",
                       )}
                     >
-                      {activeAlerts.has(stock.symbol) ? (
+                      {alertedSymbols.has(stock.symbol) ? (
                         <>
                           <BellRing className="w-3.5 h-3.5 group-hover:hidden" />
                           <BellOff className="w-3.5 h-3.5 hidden group-hover:block" />
@@ -291,12 +291,12 @@ export function PremiumWatchlistTable({
                   onClick={(e) => toggleAlert(stock.symbol, e)}
                   className={cn(
                     "group inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium transition-colors border w-full sm:w-[125px]",
-                    activeAlerts.has(stock.symbol)
+                    alertedSymbols.has(stock.symbol)
                       ? "bg-yellow-500 border-yellow-500 text-slate-900 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400 hover:shadow-none"
                       : "bg-yellow-500/10 border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-300",
                   )}
                 >
-                  {activeAlerts.has(stock.symbol) ? (
+                  {alertedSymbols.has(stock.symbol) ? (
                     <>
                       <BellRing className="w-4 h-4 group-hover:hidden" />
                       <BellOff className="w-4 h-4 hidden group-hover:block" />

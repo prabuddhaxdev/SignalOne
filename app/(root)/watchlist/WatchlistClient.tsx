@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchCommand from "@/components/SearchCommand";
 import { ManageSymbolsPanel } from "@/components/watchlist/ManageSymbolsPanel";
 import { Loader2, Plus } from "lucide-react";
@@ -22,10 +22,28 @@ export default function WatchlistClient({
 }) {
   const [alertModalOpen, setAlertModalOpen] = useState(false);
   const [alertModalSymbol, setAlertModalSymbol] = useState("");
+  const [alertedSymbols, setAlertedSymbols] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const symbols = new Set(alerts.map((a: any) => a.symbol));
+    setAlertedSymbols(symbols);
+  }, [alerts]);
 
   const handleOpenAlertModal = (symbol: string) => {
     setAlertModalSymbol(symbol);
     setAlertModalOpen(true);
+  };
+
+  const addAlertedSymbol = (symbol: string) => {
+    setAlertedSymbols((prev) => new Set(prev).add(symbol));
+  };
+
+  const removeAlertedSymbol = (symbol: string) => {
+    setAlertedSymbols((prev) => {
+      const next = new Set(prev);
+      next.delete(symbol);
+      return next;
+    });
   };
 
   return (
@@ -60,6 +78,7 @@ export default function WatchlistClient({
                 open={alertModalOpen}
                 onOpenChange={setAlertModalOpen}
                 symbol={alertModalSymbol}
+                onAlertCreated={addAlertedSymbol}
               />
             </div>
           </div>
@@ -70,7 +89,13 @@ export default function WatchlistClient({
           {/* Left Column: Symbols and News */}
           <div className="col-span-1 lg:col-span-3 space-y-8">
             <div className="w-full">
-              <ManageSymbolsPanel initialData={watchlist} onOpenAlertModal={handleOpenAlertModal} />
+              <ManageSymbolsPanel
+                initialData={watchlist}
+                onOpenAlertModal={handleOpenAlertModal}
+                alertedSymbols={alertedSymbols}
+                addAlertedSymbol={addAlertedSymbol}
+                removeAlertedSymbol={removeAlertedSymbol}
+              />
             </div>
 
             <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin text-gray-500" /></div>}>

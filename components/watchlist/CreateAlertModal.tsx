@@ -19,10 +19,12 @@ export function CreateAlertModal({
   open,
   onOpenChange,
   symbol,
+  onAlertCreated,
 }: {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   symbol?: string;
+  onAlertCreated?: (symbol: string) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [alertName, setAlertName] = useState("");
@@ -122,6 +124,7 @@ export function CreateAlertModal({
 
       if (result.success) {
         toast.success(`Alert created for ${stockSymbol}`);
+        onAlertCreated?.(stockSymbol);
         setModalOpen(false);
         resetForm();
       } else {

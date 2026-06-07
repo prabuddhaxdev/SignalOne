@@ -16,10 +16,16 @@ const SORT_OPTIONS = [
 
 export function ManageSymbolsPanel({
   initialData,
-  onOpenAlertModal
+  onOpenAlertModal,
+  alertedSymbols,
+  addAlertedSymbol,
+  removeAlertedSymbol,
 }: {
   initialData: any[];
   onOpenAlertModal?: (symbol: string) => void;
+  alertedSymbols: Set<string>;
+  addAlertedSymbol: (symbol: string) => void;
+  removeAlertedSymbol: (symbol: string) => void;
 }) {
   const [stocks, setStocks] = useState(initialData || []);
   const [sortValue, setSortValue] = useState("symbol-asc");
@@ -121,6 +127,9 @@ export function ManageSymbolsPanel({
           sortConfig={sortConfig}
           onAlert={handleAlert}
           onRemoveFromWatchlist={handleRemoveFromWatchlist}
+          alertedSymbols={alertedSymbols}
+          addAlertedSymbol={addAlertedSymbol}
+          removeAlertedSymbol={removeAlertedSymbol}
         />
       </div>
     </div>
