@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { removeFromWatchlist } from "@/lib/actions/watchlist.actions";
+import { deleteAlertBySymbol } from "@/lib/actions/alert.actions";
 
 interface PremiumWatchlistTableProps {
   data: any[];
@@ -30,10 +31,23 @@ export function PremiumWatchlistTable({
   const router = useRouter();
   const [removedSymbols, setRemovedSymbols] = useState<Set<string>>(new Set());
 
-  const toggleAlert = (symbol: string, e: React.MouseEvent) => {
+  const toggleAlert = async (symbol: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (alertedSymbols.has(symbol)) {
-      removeAlertedSymbol(symbol);
+      toast.promise(
+        deleteAlertBySymbol(symbol),
+        {
+          loading: "Removing alert...",
+          success: (data) => {
+            if (data.success) {
+              removeAlertedSymbol(symbol);
+              return `Alert removed for ${symbol}`;
+            }
+            throw new Error(data.message);
+          },
+          error: (err) => err.message || "Failed to remove alert",
+        }
+      );
     } else {
       addAlertedSymbol(symbol);
       if (onAlert) {
