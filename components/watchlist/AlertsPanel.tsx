@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Trash2, Bell, Edit2, Check, X } from "lucide-react";
 import { deleteAlert, updateAlert } from "@/lib/actions/alert.actions";
 import { formatPrice } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface AlertsPanelProps {
   alerts: any[];
@@ -54,9 +55,12 @@ export default function AlertsPanel({ alerts, onRefresh }: AlertsPanelProps) {
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 rounded bg-gray-700 flex items-center justify-center font-bold text-xs text-white">
-                      {alert.symbol[0]}
-                    </div >
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src={alert.logo} />
+                      <AvatarFallback className="bg-gray-700 text-white text-xs font-bold">
+                        {alert.symbol[0]}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="flex-1">
                       <div className="font-bold text-white text-sm">
                         {alert.symbol}

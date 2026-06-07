@@ -219,6 +219,21 @@ export const getStocksDetails = cache(async (symbol: string) => {
 
     const [ticker, name, exchange, close, change, marketCap, peRatio, currency, open, high, low, changeAbs] = result.d;
 
+    // Fetch logo from Finnhub
+    let logo = null;
+    try {
+      const token = process.env.FINNHUB_API_KEY ?? NEXT_PUBLIC_FINNHUB_API_KEY;
+      if (token) {
+        const logoRes = await fetch(`${FINNHUB_BASE_URL}/stock/profile2?symbol=${cleanSymbol}&token=${token}`);
+        if (logoRes.ok) {
+          const logoData = await logoRes.json();
+          logo = logoData.logo;
+        }
+      }
+    } catch (e) {
+      console.error("Error fetching logo from Finnhub:", e);
+    }
+
     return {
       symbol: result.s,
       company: name || ticker,
@@ -238,6 +253,7 @@ export const getStocksDetails = cache(async (symbol: string) => {
       },
       changeAbs: changeAbs || 0,
       prev: (close || 0) - (changeAbs || 0),
+      logo,
     };
   } catch (error) {
     console.error(`Error fetching details for ${cleanSymbol}:`, error);

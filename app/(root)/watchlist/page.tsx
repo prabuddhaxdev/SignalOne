@@ -33,6 +33,7 @@ export default async function WatchlistPage() {
       return {
         ...alert,
         currency: details?.currency || "USD",
+        logo: details?.logo,
       };
     })
   );
