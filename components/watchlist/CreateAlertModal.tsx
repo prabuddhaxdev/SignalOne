@@ -12,6 +12,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { getStocksDetails } from "@/lib/actions/finnhub.actions";
+import { createAlert } from "@/lib/actions/alert.actions";
+import { toast } from "sonner";
 
 export function CreateAlertModal({
   open,
@@ -82,7 +84,7 @@ export function CreateAlertModal({
     setError(null);
   };
 
-  const handleCreate = (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -105,9 +107,29 @@ export function CreateAlertModal({
       return;
     }
 
-    console.log("Creating alert:", { alertName, stockSymbol, alertType, condition, threshold });
-    setModalOpen(false);
-    resetForm();
+    try {
+      const conditionMap: Record<string, "ABOVE" | "BELOW"> = {
+        "Greater than": "ABOVE",
+        "Less than": "BELOW",
+        "Equal to": "ABOVE",
+      };
+
+      const result = await createAlert({
+        symbol: stockSymbol,
+        targetPrice: threshVal,
+        condition: conditionMap[condition] || "ABOVE",
+      });
+
+      if (result.success) {
+        toast.success(`Alert created for ${stockSymbol}`);
+        setModalOpen(false);
+        resetForm();
+      } else {
+        setError(result.message || "Failed to create alert");
+      }
+    } catch (e: any) {
+      setError(e.message || "An unexpected error occurred");
+    }
   };
 
   const handleThresholdChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Trash2, Bell, Edit2, Check, X } from "lucide-react";
-
 import { deleteAlert, updateAlert } from "@/lib/actions/alert.actions";
 
 interface AlertsPanelProps {

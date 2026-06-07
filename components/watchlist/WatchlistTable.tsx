@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import WatchlistButton from "@/components/WatchlistButton";
-import { createAlertAction, removeAlertAction } from "@/lib/actions/alert.actions";
+import { createAlert, deleteAlertBySymbol } from "@/lib/actions/alert.actions";
 
 export function WatchlistTable({ watchlist }: WatchlistTableProps) {
   const router = useRouter();
@@ -60,11 +60,10 @@ export function WatchlistTable({ watchlist }: WatchlistTableProps) {
     e.stopPropagation();
 
     toast.promise(
-      createAlertAction({
+      createAlert({
         symbol: item.symbol,
-        company: item.company,
-        threshold: item.currentPrice || 0,
-        alertType: "upper",
+        targetPrice: item.currentPrice || 0,
+        condition: "ABOVE",
       }),
       {
         loading: "Adding alert...",
@@ -84,7 +83,7 @@ export function WatchlistTable({ watchlist }: WatchlistTableProps) {
     e.stopPropagation();
 
     toast.promise(
-      removeAlertAction({ symbol }),
+      deleteAlertBySymbol(symbol),
       {
         loading: "Removing alert...",
         success: (data) => {
