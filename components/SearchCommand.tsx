@@ -122,7 +122,7 @@ export default function SearchCommand({
               </div>
               {displayStocks?.map((stock, i) => (
                 <li
-                  key={stock.symbol}
+                  key={stock.id}
                   className="search-item flex items-center justify-between search-item"
                 >
                   <Link

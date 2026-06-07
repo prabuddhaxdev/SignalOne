@@ -166,6 +166,7 @@ export const searchStocks = cache(
         });
 
         return {
+          id: fullSymbol,
           symbol: ticker, // Return only the ticker for cleaner URLs
           name: name || ticker,
           exchange: exchange || "US",

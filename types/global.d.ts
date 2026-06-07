@@ -69,6 +69,7 @@ declare global {
 
   //
   type Stock = {
+    id: string;
     symbol: string;
     name: string;
     exchange: string;
