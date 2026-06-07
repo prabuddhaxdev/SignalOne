@@ -9,6 +9,7 @@ import { headers } from "next/headers";
 // Create a new alert
 export async function createAlert(params: {
   symbol: string;
+  alertType: 'Price' | 'Stock P/E';
   targetPrice: number;
   condition: "ABOVE" | "BELOW";
 }) {
@@ -115,6 +116,7 @@ export async function deleteAlert(alertId: string) {
 
 // Update an alert
 export async function updateAlert(alertId: string, updates: {
+  alertType?: 'Price' | 'Stock P/E';
   targetPrice?: number;
   condition?: "ABOVE" | "BELOW";
 }) {

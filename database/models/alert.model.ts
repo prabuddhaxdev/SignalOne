@@ -3,6 +3,7 @@ import { Schema, model, models, type Document, type Model } from 'mongoose';
 export interface IAlert extends Document {
     userId: string;
     symbol: string;
+    alertType: 'Price' | 'Stock P/E';
     targetPrice: number;
     condition: 'ABOVE' | 'BELOW';
     active: boolean;
@@ -15,6 +16,7 @@ const AlertSchema = new Schema<IAlert>(
     {
         userId: { type: String, required: true, index: true },
         symbol: { type: String, required: true, uppercase: true, trim: true },
+        alertType: { type: String, enum: ['Price', 'Stock P/E'], default: 'Price', required: true },
         targetPrice: { type: Number, required: true },
         condition: { type: String, enum: ['ABOVE', 'BELOW'], required: true },
         active: { type: Boolean, default: true },
@@ -28,4 +30,5 @@ const AlertSchema = new Schema<IAlert>(
     { timestamps: true }
 );
 
-export const Alert: Model<IAlert> = (models?.Alert as Model<IAlert>) || model<IAlert>('Alert', AlertSchema);
+delete models.Alert;
+export const Alert: Model<IAlert> = model<IAlert>('Alert', AlertSchema);

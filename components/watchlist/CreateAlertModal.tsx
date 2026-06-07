@@ -145,6 +145,7 @@ export function CreateAlertModal({
 
       const result = await createAlert({
         symbol: stockSymbol,
+        alertType: alertType as 'Price' | 'Stock P/E',
         targetPrice: threshVal,
         condition: conditionMap[condition] || "ABOVE",
       });
@@ -234,7 +235,7 @@ export function CreateAlertModal({
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-slate-300">Condition</label>
+                <label className="text-sm font-medium text-slate-300">{alertType === "Price" ? "Price" : "P/E"} Condition</label>
                 <select
                   value={condition}
                   onChange={(e) => setCondition(e.target.value)}
@@ -250,10 +251,12 @@ export function CreateAlertModal({
             {/* Threshold Value */}
             <div className="flex flex-col gap-1.5">
               <div className="flex justify-between items-center">
-                <label className="text-sm font-medium text-slate-300">Threshold Value</label>
+                <label className="text-sm font-medium text-slate-300">
+                  {alertType === "Price" ? "Price" : "P/E"} Threshold
+                </label>
                 {(alertType === "Price" ? currentPrice !== null : currentPE !== null) && (
                   <span className="text-xs text-slate-500">
-                    {alertType === "Stock P/E" ? "Current stock PE:" : "Current:"} <span className="text-slate-300 font-mono">
+                    {alertType === "Stock P/E" ? "Current stock PE:" : "Current Price:"} <span className="text-slate-300 font-mono">
                       {alertType === "Price"
                         ? formatPrice(currentPrice!, currency)
                         : currentPE}
