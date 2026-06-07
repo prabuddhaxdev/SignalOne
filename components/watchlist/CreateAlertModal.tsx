@@ -34,6 +34,7 @@ export function CreateAlertModal({
   const [condition, setCondition] = useState("Greater than");
   const [threshold, setThreshold] = useState("");
   const [currentPrice, setCurrentPrice] = useState<number | null>(null);
+  const [currentPE, setCurrentPE] = useState<string | null>(null);
   const [currency, setCurrency] = useState("USD");
   const [exchange, setExchange] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -66,20 +67,24 @@ export function CreateAlertModal({
           const data = await getStocksDetails(stockSymbol);
           if (data) {
             setCurrentPrice(data.currentPrice);
+            setCurrentPE(data.peRatio);
             setCurrency(data.currency);
             setExchange(data.exchange);
           } else {
             setCurrentPrice(null);
+            setCurrentPE(null);
             setCurrency("USD");
             setExchange(null);
           }
         } catch (e) {
           setCurrentPrice(null);
+          setCurrentPE(null);
           setCurrency("USD");
           setExchange(null);
         }
       } else {
         setCurrentPrice(null);
+        setCurrentPE(null);
       }
     }, 500);
     return () => clearTimeout(timer);
@@ -92,6 +97,7 @@ export function CreateAlertModal({
     setCondition("Greater than");
     setThreshold("");
     setCurrentPrice(null);
+    setCurrentPE(null);
     setCurrency("USD");
     setExchange(null);
     setError(null);
@@ -101,8 +107,18 @@ export function CreateAlertModal({
     e.preventDefault();
     setError(null);
 
-    if (currentPrice === null) {
-      setError("Unable to verify current price. Please check the symbol.");
+    let comparisonValue: number | null = null;
+    if (alertType === "Price") {
+      comparisonValue = currentPrice;
+    } else if (alertType === "Stock P/E") {
+      const peVal = parseFloat(currentPE || "");
+      if (!isNaN(peVal)) {
+        comparisonValue = peVal;
+      }
+    }
+
+    if (comparisonValue === null) {
+      setError(`Unable to verify current ${alertType === "Price" ? "price" : "P/E"}. Please check the symbol.`);
       return;
     }
 
@@ -112,11 +128,11 @@ export function CreateAlertModal({
       return;
     }
 
-    const diff = Math.abs(threshVal - currentPrice);
-    const limit = currentPrice * 0.05;
+    const diff = Math.abs(threshVal - comparisonValue);
+    const limit = comparisonValue * 0.05;
 
     if (diff < limit) {
-      setError(`Threshold must be at least 5% away from the current price (${currentPrice.toFixed(2)}).`);
+      setError(`Threshold must be at least 5% away from the current ${alertType === "Price" ? "price" : "P/E"} (${comparisonValue.toFixed(2)}).`);
       return;
     }
 
@@ -235,10 +251,12 @@ export function CreateAlertModal({
             <div className="flex flex-col gap-1.5">
               <div className="flex justify-between items-center">
                 <label className="text-sm font-medium text-slate-300">Threshold Value</label>
-                {currentPrice !== null && (
+                {(alertType === "Price" ? currentPrice !== null : currentPE !== null) && (
                   <span className="text-xs text-slate-500">
-                    Current: <span className="text-slate-300 font-mono">
-                      {formatPrice(currentPrice, currency)}
+                    {alertType === "Stock P/E" ? "Current stock PE:" : "Current:"} <span className="text-slate-300 font-mono">
+                      {alertType === "Price"
+                        ? formatPrice(currentPrice!, currency)
+                        : currentPE}
                     </span>
                   </span>
                 )}
