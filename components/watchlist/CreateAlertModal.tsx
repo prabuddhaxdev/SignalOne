@@ -188,7 +188,7 @@ export function CreateAlertModal({
             Create Alert
           </DialogTitle>
           <DialogDescription className="text-slate-400 text-sm">
-            Set up a new alert to get notified when conditions are met.
+            Alerts are active for 90 days from the day of creation.
           </DialogDescription>
         </DialogHeader>
 

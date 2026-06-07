@@ -79,7 +79,7 @@ export default function AlertsPanel({ alerts, onRefresh }: AlertsPanelProps) {
                     {new Date(
                       new Date(alert.createdAt).getTime() +
                         90 * 24 * 60 * 60 * 1000,
-                    ).toLocaleDateString()}
+                    ).toLocaleDateString('en-GB')}
                   </div >
                 </div >
                 <div className="flex flex-col space-y-2">
